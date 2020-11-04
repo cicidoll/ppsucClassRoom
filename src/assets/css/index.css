@@ -1,0 +1,16 @@
+body {
+  width: 100vw;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+[v-cloak] {
+  display: none;
+}
+
+#banner {
+  height: 10vh;
+  width: 100vw;
+  background-color: pink;
+}
