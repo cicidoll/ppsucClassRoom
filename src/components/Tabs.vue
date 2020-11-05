@@ -103,44 +103,39 @@ export default {
 
   .tabs-bar{
     width: 100vw;
-    height: 10vh;
+    height: 5vh;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
 
     .tabs-tab{
-      height: 8vh;
-      width: 20vw;
-      flex: 0.7;
+      width: 25vw;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-left: 0.1rem;
+      margin-right: 0.1rem;
       padding: 4px 16px;
       margin-right: 6px;
       background-color: #fff;
       border: 1px solid #d7dde4;
-      cursor: pointer;
     }
     .tabs-tab-active{
       color: #3399ff;
-      border-top: 1px solid #3399ff;
-      border-bottom: 1px solid #fff;
+      // border-top: 1px solid #3399ff;
+      // border-bottom: 1px solid #fff;
     }
     .tabs-tab-active:before{
-      content: '';
-      display: block;
-      height: 1px;
+      // content: '';
+      // display: block;
+      // height: 1px;
       background: #3399ff;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      // position: absolute;
+      // top: 0;
+      // left: 0;
+      // right: 0;
     }
-  }
-  .tabs-bar:after{
-    content: '';
-    display: block;
-    width: 100%;
-    height: 1px;
-    background: #d7dde4;
-    margin-top: -1px;
   }
   .tabs-content{
     padding: 8px 0;

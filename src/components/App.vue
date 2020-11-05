@@ -25,7 +25,7 @@
       </tabs>
     </div>
 
-    <div id="building"></div>
+    <buildingSelect id="building"></buildingSelect>
     <div id="footbar"></div>
   </div>
 
@@ -34,14 +34,38 @@
 <script>
 import pane from './Pane.vue'
 import tabs from './Tabs.vue'
+import buildingSelect from './BuildingSelect.vue'
+const axios = require('axios')
 
 export default {
   data: function () {
-    return {activeKey: '1'}
+    return {
+      activeKey: '1',
+      roomAllDayData: {}
+    }
   },
   components: {
     pane,
-    tabs
+    tabs,
+    buildingSelect
+  },
+  methods: {
+    getData: function () {
+      // Make a request for a user with a given ID
+      // GET request for remote image
+      axios({
+        method: 'get',
+        url: 'http://127.0.0.1:8081/data',
+        responseType: 'json'
+      }).then(function (response) {
+        // handle success
+        console.log(response)
+        return response
+      }).catch(function (error) {
+        // handle error
+        console.log(error)
+      })
+    }
   }
 }
 </script>
