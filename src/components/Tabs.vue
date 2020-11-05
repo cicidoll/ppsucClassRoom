@@ -93,44 +93,58 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .tabs{
+  width: 100vw;
   font-size: 14px;
   color: #657180;
+  display: flex;
+  flex-direction: column;
+
+  .tabs-bar{
+    width: 100vw;
+    height: 10vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+
+    .tabs-tab{
+      height: 8vh;
+      width: 20vw;
+      flex: 0.7;
+      padding: 4px 16px;
+      margin-right: 6px;
+      background-color: #fff;
+      border: 1px solid #d7dde4;
+      cursor: pointer;
+    }
+    .tabs-tab-active{
+      color: #3399ff;
+      border-top: 1px solid #3399ff;
+      border-bottom: 1px solid #fff;
+    }
+    .tabs-tab-active:before{
+      content: '';
+      display: block;
+      height: 1px;
+      background: #3399ff;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+  }
+  .tabs-bar:after{
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: #d7dde4;
+    margin-top: -1px;
+  }
+  .tabs-content{
+    padding: 8px 0;
+  }
 }
-.tabs-bar:after{
-  content: '';
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: #d7dde4;
-  margin-top: -1px;
-}
-.tabs-tab{
-  display: inline-block;
-  padding: 4px 16px;
-  margin-right: 6px;
-  background-color: #fff;
-  border: 1px solid #d7dde4;
-  cursor: pointer;
-  position: relative;
-}
-.tabs-tab-active{
-  color: #3399ff;
-  border-top: 1px solid #3399ff;
-  border-bottom: 1px solid #fff;
-}
-.tabs-tab-active:before{
-  content: '';
-  display: block;
-  height: 1px;
-  background: #3399ff;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-.tabs-content{
-  padding: 8px 0;
-}
+
 </style>

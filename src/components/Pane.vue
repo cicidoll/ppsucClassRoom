@@ -34,6 +34,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.$parent)
     this.updateNav()
   }
 }

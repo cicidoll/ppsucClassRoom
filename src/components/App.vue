@@ -24,6 +24,9 @@
         </pane>
       </tabs>
     </div>
+
+    <div id="building"></div>
+    <div id="footbar"></div>
   </div>
 
 </template>
