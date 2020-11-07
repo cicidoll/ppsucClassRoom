@@ -18,19 +18,30 @@
     <Collapse v-model="value">
       <Panel name="1">
         上午1、2节
-        <p slot="content">测试1（Steve Jobs）······</p>
+        <p slot="content">测试1：
+          内容<br>
+          内容<br>
+          内容<br>
+          内容<br>
+        </p>
       </Panel>
       <Panel name="2">
         上午3、4节
-        <p slot="content">测试2（Steve Jobs）······</p>
+        <p slot="content">测试2：
+          内容<br>
+          内容<br></p>
       </Panel>
       <Panel name="3">
         下午1、2节
-        <p slot="content">测试3（Steve Jobs）······</p>
+        <p slot="content">测试3：
+          内容<br>
+          内容<br></p>
       </Panel>
       <Panel name="4">
         下午3、4节
-        <p slot="content">测试4（Steve Jobs）······</p>
+        <p slot="content">测试4：
+          内容<br>
+          内容<br></p>
       </Panel>
     </Collapse>
     <buildingSelect id="building"></buildingSelect>
@@ -51,7 +62,7 @@ const axios = require('axios')
 export default {
   data: function () {
     return {
-      activeKey: '1',
+      // activeKey: '1',
       roomAllDayData: {},
       value: '1'
     }

@@ -8,12 +8,12 @@ export default {
   name: 'Collapse',
   props: {
     accordion: {
-      //是否为手风琴模式，该模式下同时只能展开一个面板
+      // 是否为手风琴模式，该模式下同时只能展开一个面板
       type: Boolean,
       default: false
     },
     value: {
-      //对应panel.vue展开的name，手风琴模式下为数组
+      // 对应panel.vue展开的name，手风琴模式下为数组
       type: [Array, String]
     },
     simple: {
@@ -23,7 +23,7 @@ export default {
   },
   data () {
     return {
-      //设置内部使用状态，用于实现v-model
+      // 设置内部使用状态，用于实现v-model
       currentValue: this.value
     }
   },
@@ -38,7 +38,7 @@ export default {
   //   }
   // },
   mounted () {
-    //初始化时，设置isActive和index
+    // 初始化时，设置isActive和index
     this.setActive()
   },
   methods: {
@@ -53,13 +53,13 @@ export default {
         const name = child.name || index.toString()
         let isActive = false
 
-        //在两种模式下，判断当前Panel是否需要激活
+        // 在两种模式下，判断当前Panel是否需要激活
         if (self.accordion) {
           isActive = activeKey === name
         } else {
           isActive = activeKey.indexOf(name) > -1
         }
-        //给当前Panel设置isActive和index，index为它在slot中的序列
+        // 给当前Panel设置isActive和index，index为它在slot中的序列
         child.isActive = isActive
         child.index = index
       })
@@ -74,11 +74,11 @@ export default {
       if (!Array.isArray(activeKey)) {
         activeKey = [activeKey]
       }
-      //手风琴模式下，如果多设置了数组，也只取其第一项
+      // 手风琴模式下，如果多设置了数组，也只取其第一项
       if (accordion && activeKey.length > 1) {
         activeKey = [activeKey[0]]
       }
-      //将activeKey转为字符串，因为用户设置的有可能是字符串数字，比较时类型会不一致
+      // 将activeKey转为字符串，因为用户设置的有可能是字符串数字，比较时类型会不一致
       for (let i = 0; i < activeKey.length; i++) {
         activeKey[i] = activeKey[i].toString()
       }
@@ -86,7 +86,7 @@ export default {
     },
     toggle (data) {
       const name = data.name.toString()
-      //声明一个临时激活项列表
+      // 声明一个临时激活项列表
       let newActiveKey = []
       if (this.accordion) {
         /**
@@ -100,12 +100,12 @@ export default {
       } else {
         let activeKey = this.getActiveKey()
         const nameIndex = activeKey.indexOf(name)
-        //点击后切换关闭
+        // 点击后切换关闭
         if (data.isActive) {
           if (nameIndex > -1) {
             activeKey.splice(nameIndex, 1)
           }
-        //点击后切换为展开
+        // 点击后切换为展开
         } else {
           if (nameIndex < 0) {
             activeKey.push(name)
@@ -113,7 +113,7 @@ export default {
         }
         newActiveKey = activeKey
       }
-      //更新currentValue会触发watch，从而调用setActive方法
+      // 更新currentValue会触发watch，从而调用setActive方法
       this.currentValue = newActiveKey
       this.$emit('input', newActiveKey)
       // this.$emit('on-change', newActiveKey)
@@ -121,10 +121,10 @@ export default {
   },
   watch: {
     value (val) {
-      //从外部改变value时，更新内部的数据。
+      // 从外部改变value时，更新内部的数据。
       this.currentValue = val
     },
-    //修改currentValue时，重新设置一遍状态
+    // 修改currentValue时，重新设置一遍状态
     currentValue () {
       this.setActive()
     }

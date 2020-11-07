@@ -1,18 +1,18 @@
 <template>
   <div class="tabs-bar">
-    <div class="tabs-tab">
+    <div :class="classes('day1')" @click="changeDay('day1')">
       <slot name="day1"></slot>
     </div>
-    <div class="tabs-tab">
+    <div :class="classes('day2')" @click="changeDay('day2')">
       <slot name="day2"></slot>
     </div>
-    <div class="tabs-tab">
+    <div :class="classes('day3')" @click="changeDay('day3')">
       <slot name="day3"></slot>
     </div>
-    <div class="tabs-tab">
+    <div :class="classes('day4')" @click="changeDay('day4')">
       <slot name="day4"></slot>
     </div>
-    <div class="tabs-tab">
+    <div :class="classes('day5')" @click="changeDay('day5')">
       <slot name="day5"></slot>
     </div>
   </div>
@@ -21,8 +21,23 @@
 <script>
 export default {
   name: 'daySelect',
+  data () {
+    return {
+      // 默认为周一
+      value: 'day1'
+    }
+  },
   methods: {
-
+    changeDay (day) {
+      // 改变值
+      this.value = day
+    },
+    classes (day) {
+      return [
+        'tabs-tab',
+        this.value === day ? 'tabs-tab-active' : ''
+      ]
+    }
   }
 }
 </script>
@@ -53,16 +68,6 @@ export default {
     color: #3399ff;
     // border-top: 1px solid #3399ff;
     // border-bottom: 1px solid #fff;
-  }
-  .tabs-tab-active:before{
-    // content: '';
-    // display: block;
-    // height: 1px;
-    background: #3399ff;
-    // position: absolute;
-    // top: 0;
-    // left: 0;
-    // right: 0;
   }
 }
 </style>
