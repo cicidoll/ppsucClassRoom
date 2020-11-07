@@ -6,25 +6,33 @@
     </div>
 
     <div id="body-content">
-      <tabs v-model="activeKey">
-        <pane label="标签一" name="1">
-          标签一的内容
-        </pane>
-        <pane label="标签二" name="2">
-          标签二的内容
-        </pane>
-        <pane label="标签三" name="3">
-          标签三的内容
-        </pane>
-        <pane label="标签四" name="4">
-          标签四的内容
-        </pane>
-        <pane label="标签五" name="5">
-          标签五的内容
-        </pane>
-      </tabs>
+      <daySelect>
+        <p slot="day1">周一</p>
+        <p slot="day2">周二</p>
+        <p slot="day3">周三</p>
+        <p slot="day4">周四</p>
+        <p slot="day5">周五</p>
+      </daySelect>
     </div>
 
+    <Collapse v-model="value">
+      <Panel name="1">
+        上午1、2节
+        <p slot="content">测试1（Steve Jobs）······</p>
+      </Panel>
+      <Panel name="2">
+        上午3、4节
+        <p slot="content">测试2（Steve Jobs）······</p>
+      </Panel>
+      <Panel name="3">
+        下午1、2节
+        <p slot="content">测试3（Steve Jobs）······</p>
+      </Panel>
+      <Panel name="4">
+        下午3、4节
+        <p slot="content">测试4（Steve Jobs）······</p>
+      </Panel>
+    </Collapse>
     <buildingSelect id="building"></buildingSelect>
     <div id="footbar"></div>
   </div>
@@ -32,22 +40,27 @@
 </template>
 
 <script>
-import pane from './Pane.vue'
-import tabs from './Tabs.vue'
 import buildingSelect from './BuildingSelect.vue'
+import daySelect from './DaySelect.vue'
+
+import Collapse from './Collapse.vue'
+import Panel from './Panel.vue'
+
 const axios = require('axios')
 
 export default {
   data: function () {
     return {
       activeKey: '1',
-      roomAllDayData: {}
+      roomAllDayData: {},
+      value: '1'
     }
   },
   components: {
-    pane,
-    tabs,
-    buildingSelect
+    daySelect,
+    buildingSelect,
+    Collapse,
+    Panel
   },
   methods: {
     getData: function () {

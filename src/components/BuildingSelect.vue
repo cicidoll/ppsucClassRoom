@@ -1,12 +1,12 @@
 <template>
 <div class="build-tabs">
-    <div class="build-tab-bar" @click="getData()">
+    <div class="build-tab-bar" @click="getData">
       铸剑楼
     </div>
-    <div class="build-tab-bar" @click="getData()">
+    <div class="build-tab-bar" @click="getData">
       中楼
     </div>
-    <div class="build-tab-bar" @click="getData()">
+    <div class="build-tab-bar" @click="getData">
       西配
     </div>
 </div>
@@ -27,10 +27,14 @@ export default {
 .build-tabs{
   position: absolute;
   width: 100vw;
+  height: 6vh;
   bottom: 5vh;
   display: flex;
   .build-tab-bar{
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     text-align: center;
     border: solid 1px black;
   }
