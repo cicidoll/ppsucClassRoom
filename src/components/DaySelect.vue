@@ -1,18 +1,18 @@
 <template>
   <div class="tabs-bar">
-    <div :class="classes('day1')" @click="changeDay('day1')">
+    <div :class="classes('1')" @click="changeDay('1')">
       <slot name="day1"></slot>
     </div>
-    <div :class="classes('day2')" @click="changeDay('day2')">
+    <div :class="classes('2')" @click="changeDay('2')">
       <slot name="day2"></slot>
     </div>
-    <div :class="classes('day3')" @click="changeDay('day3')">
+    <div :class="classes('3')" @click="changeDay('3')">
       <slot name="day3"></slot>
     </div>
-    <div :class="classes('day4')" @click="changeDay('day4')">
+    <div :class="classes('4')" @click="changeDay('4')">
       <slot name="day4"></slot>
     </div>
-    <div :class="classes('day5')" @click="changeDay('day5')">
+    <div :class="classes('5')" @click="changeDay('5')">
       <slot name="day5"></slot>
     </div>
   </div>
@@ -24,13 +24,14 @@ export default {
   data () {
     return {
       // 默认为周一
-      value: 'day1'
+      value: '1'
     }
   },
   methods: {
     changeDay (day) {
       // 改变值
       this.value = day
+      this.$parent.selectDay(day)
     },
     classes (day) {
       return [

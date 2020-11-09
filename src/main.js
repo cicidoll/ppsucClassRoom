@@ -6,6 +6,9 @@ import App from './components/App.vue'
 import './assets/css/index.css'
 import './assets/css/normalize.css'
 
+import VueResource from 'vue-resource'
+Vue.use(VueResource)
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
