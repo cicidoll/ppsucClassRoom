@@ -2,7 +2,9 @@
 
   <div id="app" v-cloak>
     <div id="banner">
-      <span>17网二陈川毕设：去哪自习（施工中）</span>
+      <span>17网二陈川-毕设<br>
+              去哪学<br>
+            （施工中···）</span>
     </div>
 
     <div id="body-content">
@@ -29,15 +31,27 @@
         </p>
       </Panel>
       <Panel name="3">
+        上午空闲教室
+        <p slot="content">
+          {{computed (roomData.am12, roomData.am34)}}
+        </p>
+      </Panel>
+      <Panel name="4">
         下午1、2节
         <p slot="content">
           {{roomData.pm12}}
         </p>
       </Panel>
-      <Panel name="4">
+      <Panel name="5">
         下午3、4节
         <p slot="content">
           {{roomData.pm34}}
+        </p>
+      </Panel>
+      <Panel name="6">
+        下午空闲教室
+        <p slot="content">
+          {{computed (roomData.pm12, roomData.pm34)}}
         </p>
       </Panel>
     </Collapse>
@@ -115,8 +129,26 @@ export default {
         }
         this.roomData[list] = res
       }
+    },
+    computed (list1, list2) {
+      let res = []
+      let data1 = list1.slice(0)
+      let data2 = list2.slice(0)
+      while (data1.length !== 0 && data2.length !== 0) {
+        if (data1[0] === data2[0]) {
+          res.push(data1[0])
+          data1.shift()
+          data2.shift()
+        } else if (data1[0] < data2[0]) {
+          data1.shift()
+        } else if (data1[0] > data2[0]) {
+          data2.shift()
+        }
+      }
+      return res
     }
   },
+
   created () {
     this.getJsonData()
   },
