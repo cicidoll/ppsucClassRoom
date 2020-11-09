@@ -66,8 +66,6 @@ export default {
   }
   .tabs-tab-active{
     color: #3399ff;
-    // border-top: 1px solid #3399ff;
-    // border-bottom: 1px solid #fff;
   }
 }
 </style>
