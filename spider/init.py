@@ -67,8 +67,6 @@ pathPool = [#上午1、2节
     "/html[1]/body[1]/div[3]/div[1]/div[1]/div[3]/div[1]/div[2]/table[1]/tbody[1]/tr[4]/td[6]/text()",
 ]
 
-# am12, am34, pm12, pm34 = list(), list(), list(), list()
-
 # 定义一个变量
 jsontext = {'data':[]}
 
@@ -128,8 +126,7 @@ def getResponse(roomNumSelect):
                     pathFlag = RegStr(pathTemp)
 
                 #结果检测完毕
-                # saveResult(pathFlag, classRoomIndex, count, roomNumSelect)
-                    #append(0)为占位符,表示有课
+                #append(0)为占位符,表示有课
                 if count<=5:
                     if pathFlag==0:#pathFlag为0，代表无课
                         am12.append(int(roomNumSelect[classRoomIndex]))

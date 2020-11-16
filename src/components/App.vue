@@ -17,24 +17,23 @@
       </daySelect>
       <Collapse v-model="value">
         <Panel name="1">
-          <p>上午1、2节</p> 
+          <p>上午1、2节</p>
           <p>{{roomData.am12.length}}</p>
           <ul slot="content">
             <li v-for="(item, index) in roomData.am12" :key="index">
               {{item}}
-            </li>            
+            </li>
           </ul>
         </Panel>
         <Panel name="2">
-          <p>上午3、4节</p> 
+          <p>上午3、4节</p>
           <p>{{roomData.am34.length}}</p>
-          
           <p slot="content">
             {{roomData.am34}}
           </p>
         </Panel>
         <Panel name="3">
-          <p>上午空闲教室</p> 
+          <p>上午空闲教室</p>
           <p>{{computed (roomData.am12, roomData.am34).length}}</p>
           <p slot="content">
             {{computed (roomData.am12, roomData.am34)}}<br>
@@ -54,21 +53,21 @@
           </p>
         </Panel>
         <Panel name="4">
-          <p>下午1、2节</p> 
+          <p>下午1、2节</p>
           <p>{{roomData.pm12.length}}</p>
           <p slot="content">
             {{roomData.pm12}}
           </p>
         </Panel>
         <Panel name="5">
-          <p>下午3、4节</p> 
+          <p>下午3、4节</p>
           <p>{{roomData.pm34.length}}</p>
           <p slot="content">
             {{roomData.pm34}}
           </p>
         </Panel>
         <Panel name="6">
-          <p>下午空闲教室</p> 
+          <p>下午空闲教室</p>
           <p>{{computed (roomData.pm12, roomData.pm34).length}}</p>
           <p slot="content">
             {{computed (roomData.pm12, roomData.pm34)}}
