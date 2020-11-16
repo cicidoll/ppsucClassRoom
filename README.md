@@ -1,6 +1,8 @@
 # ppsucclassroom
-
-> A Vue.js project
+空闲教室查询网站-毕设版本<br>
+施工中······<br>
+爬虫文件在./spider<br>
+本项目采用vue组件化思想构建<br>
 
 ## Build Setup
 
