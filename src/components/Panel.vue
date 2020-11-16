@@ -57,6 +57,10 @@ export default {
   margin-bottom: 10px;
   .headerClasses{
     height: 5vh;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .contentClasses{
     width: 100vw;
