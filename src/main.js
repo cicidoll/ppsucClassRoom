@@ -3,8 +3,8 @@
 import Vue from 'vue'
 import App from './components/App.vue'
 
-import './assets/css/index.css'
-import './assets/css/normalize.css'
+import '../static/assets/css/index.css'
+import '../static/assets/css/normalize.css'
 
 import VueResource from 'vue-resource'
 Vue.use(VueResource)

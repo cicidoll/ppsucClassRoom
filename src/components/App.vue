@@ -15,48 +15,60 @@
         <p slot="day4">周四</p>
         <p slot="day5">周五</p>
       </daySelect>
+      <Collapse v-model="value">
+        <Panel name="1">
+          上午1、2节
+          <p slot="content">
+            {{roomData.am12}}
+          </p>
+        </Panel>
+        <Panel name="2">
+          上午3、4节
+          <p slot="content">
+            {{roomData.am34}}
+          </p>
+        </Panel>
+        <Panel name="3">
+          上午空闲教室
+          <p slot="content">
+            {{computed (roomData.am12, roomData.am34)}}<br>
+            测试<br>
+            测试<br>
+            测试<br>
+            测试<br>
+            测试<br>
+            测试<br>
+            测试<br>
+            测试<br>
+            测试<br>
+            测试<br>
+            测试<br>
+            测试<br>
+            测试<br>
+          </p>
+        </Panel>
+        <Panel name="4">
+          下午1、2节
+          <p slot="content">
+            {{roomData.pm12}}
+          </p>
+        </Panel>
+        <Panel name="5">
+          下午3、4节
+          <p slot="content">
+            {{roomData.pm34}}
+          </p>
+        </Panel>
+        <Panel name="6">
+          下午空闲教室
+          <p slot="content">
+            {{computed (roomData.pm12, roomData.pm34)}}
+          </p>
+        </Panel>
+      </Collapse>
+      <div id="footbar"></div>
     </div>
-
-    <Collapse v-model="value">
-      <Panel name="1">
-        上午1、2节
-        <p slot="content">
-          {{roomData.am12}}
-        </p>
-      </Panel>
-      <Panel name="2">
-        上午3、4节
-        <p slot="content">
-          {{roomData.am34}}
-        </p>
-      </Panel>
-      <Panel name="3">
-        上午空闲教室
-        <p slot="content">
-          {{computed (roomData.am12, roomData.am34)}}
-        </p>
-      </Panel>
-      <Panel name="4">
-        下午1、2节
-        <p slot="content">
-          {{roomData.pm12}}
-        </p>
-      </Panel>
-      <Panel name="5">
-        下午3、4节
-        <p slot="content">
-          {{roomData.pm34}}
-        </p>
-      </Panel>
-      <Panel name="6">
-        下午空闲教室
-        <p slot="content">
-          {{computed (roomData.pm12, roomData.pm34)}}
-        </p>
-      </Panel>
-    </Collapse>
     <buildingSelect id="building"></buildingSelect>
-    <div id="footbar"></div>
   </div>
 
 </template>
@@ -159,3 +171,11 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+#body-content {
+  height: 83vh;
+  width: 100vw;
+  overflow: scroll;
+}
+</style>
