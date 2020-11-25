@@ -8,13 +8,21 @@
     </div>
 
     <div id="body-content">
-      <daySelect>
+      <!-- <daySelect>
         <p slot="day1">周一</p>
         <p slot="day2">周二</p>
         <p slot="day3">周三</p>
         <p slot="day4">周四</p>
         <p slot="day5">周五</p>
-      </daySelect>
+      </daySelect> -->
+      <el-tabs v-model="activeName" @tab-click="selectDay">
+        <!-- pane似乎无法添加@click事件，因此借用@tab-click事件，将pane的name传递过去。 -->
+        <el-tab-pane label="周一" name="1" ></el-tab-pane>
+        <el-tab-pane label="周二" name="2" ></el-tab-pane>
+        <el-tab-pane label="周三" name="3" ></el-tab-pane>
+        <el-tab-pane label="周四" name="4" ></el-tab-pane>
+        <el-tab-pane label="周五" name="5" ></el-tab-pane>
+      </el-tabs>
 
       <el-collapse v-model="activeNames">
         <el-collapse-item name="1">
@@ -83,16 +91,15 @@
 
 <script>
 import buildingSelect from './BuildingSelect.vue'
-import daySelect from './DaySelect.vue'
 
 // const axios = require('axios')
 
 export default {
-  data: function () {
+  data () {
     return {
       // activeKey: '1',
-      activeNames: ['1'],
-      // activeName: 'second',
+      activeNames: ['1'], // 内容选择器的标签指向器
+      activeName: '1', // 日期选择器的标签指向器
       allRoomAllDayData: {},
       roomAllDayData: {},
       roomData: {'am12': [], 'am34': [], 'pm12': [], 'pm34': []},
@@ -101,7 +108,6 @@ export default {
     }
   },
   components: {
-    daySelect,
     buildingSelect
   },
   methods: {
@@ -133,9 +139,11 @@ export default {
       this.roomAllDayData = this.allRoomAllDayData[index][building]
       this.selectDay(this.day)
     },
-    selectDay (day) {
+    selectDay (tab) {
+      let day = tab.name
       day = Number(day)
       this.day = day
+      // console.log(this.day);
       let start = day - 1
       for (let list in this.roomAllDayData) {
         let res = []

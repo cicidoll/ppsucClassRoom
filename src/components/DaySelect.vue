@@ -46,7 +46,7 @@ export default {
 <style scoped lang="less">
 .tabs-bar{
   width: 100vw;
-  height: 5vh;
+  height: 7vh;
   font-size: 14px;
   color: #303133;
   background-color: #d7dadfb2;
