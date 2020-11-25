@@ -8,14 +8,7 @@
     </div>
 
     <div id="body-content">
-      <!-- <daySelect>
-        <p slot="day1">周一</p>
-        <p slot="day2">周二</p>
-        <p slot="day3">周三</p>
-        <p slot="day4">周四</p>
-        <p slot="day5">周五</p>
-      </daySelect> -->
-      <el-tabs v-model="activeName" @tab-click="selectDay">
+      <el-tabs v-model="activeName" :stretch="true" @tab-click="selectDay" style="padding-left: 20px;padding-right: 20px;">
         <!-- pane似乎无法添加@click事件，因此借用@tab-click事件，将pane的name传递过去。 -->
         <el-tab-pane label="周一" name="1" ></el-tab-pane>
         <el-tab-pane label="周二" name="2" ></el-tab-pane>
@@ -24,10 +17,11 @@
         <el-tab-pane label="周五" name="5" ></el-tab-pane>
       </el-tabs>
 
-      <el-collapse v-model="activeNames">
+      <!-- <el-collapse v-model="activeNames"> -->
+      <el-collapse >
         <el-collapse-item name="1">
           <template slot="title">
-            上午1、2节(当前:{{roomData.am12.length}})
+            上午1、2节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.am12.length}}间
           </template>
           <ul>
             <li v-for="(item, index) in roomData.am12" :key="index">
@@ -38,7 +32,7 @@
 
         <el-collapse-item name="2">
           <template slot="title">
-            上午3、4节(当前：{{roomData.am34.length}})
+            上午3、4节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.am34.length}}间
           </template>
           <ul>
             <li v-for="(item, index) in roomData.am34" :key="index">
@@ -48,7 +42,7 @@
         </el-collapse-item>
         <el-collapse-item name="3">
           <template slot="title">
-            上午空闲教室(当前：{{computed(roomData.am12, roomData.am34).length}})
+            上午空闲教室&nbsp;&nbsp;&nbsp;&nbsp;{{computed(roomData.am12, roomData.am34).length}}间
           </template>
           <ul>
             <li v-for="(item, index) in computed(roomData.am12, roomData.am34)" :key="index">
@@ -58,7 +52,7 @@
         </el-collapse-item>
         <el-collapse-item name="4">
           <template slot="title">
-            下午1、2节(当前：{{roomData.pm12.length}})
+            下午1、2节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.pm12.length}}间
           </template>
           <ul>
             <li v-for="(item, index) in roomData.pm12" :key="index">
@@ -68,12 +62,12 @@
         </el-collapse-item>
         <el-collapse-item name="5">
           <template slot="title">
-            下午3、4节(当前：{{roomData.pm34.length}})
+            下午3、4节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.pm34.length}}间
           </template>
         </el-collapse-item>
         <el-collapse-item name="6">
           <template slot="title">
-            下午空闲教室(当前：{{computed (roomData.pm12, roomData.pm34).length}})
+            下午空闲教室&nbsp;&nbsp;&nbsp;&nbsp;{{computed (roomData.pm12, roomData.pm34).length}}间
           </template>
           <ul>
             <li v-for="(item, index) in computed (roomData.pm12, roomData.pm34)" :key="index">
@@ -98,7 +92,7 @@ export default {
   data () {
     return {
       // activeKey: '1',
-      activeNames: ['1'], // 内容选择器的标签指向器
+      // activeNames: ['1'], // 内容选择器的标签指向器
       activeName: '1', // 日期选择器的标签指向器
       allRoomAllDayData: {},
       roomAllDayData: {},
@@ -132,12 +126,14 @@ export default {
         this.allRoomAllDayData = res.body['data']// 此处的res对象包含了json的文件信息和数据，我们需要的json数据存在于body属性中
         this.selectBuilding(0, 'zhuJian')
       }).then(() => {
-        this.selectDay(this.day)
+        let tab = {name: this.day}
+        this.selectDay(tab)
       })
     },
     selectBuilding (index, building) {
       this.roomAllDayData = this.allRoomAllDayData[index][building]
-      this.selectDay(this.day)
+      let tab = {name: this.day}
+      this.selectDay(tab)
     },
     selectDay (tab) {
       let day = tab.name
