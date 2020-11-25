@@ -15,65 +15,65 @@
         <p slot="day4">周四</p>
         <p slot="day5">周五</p>
       </daySelect>
-      <Collapse v-model="value">
-        <Panel name="1">
-          <p>上午1、2节</p>
-          <p>{{roomData.am12.length}}</p>
-          <ul slot="content">
+
+      <el-collapse v-model="activeNames">
+        <el-collapse-item name="1">
+          <template slot="title">
+            上午1、2节(当前:{{roomData.am12.length}})
+          </template>
+          <ul>
             <li v-for="(item, index) in roomData.am12" :key="index">
               {{item}}
             </li>
           </ul>
-        </Panel>
-        <Panel name="2">
-          <p>上午3、4节</p>
-          <p>{{roomData.am34.length}}</p>
-          <p slot="content">
-            {{roomData.am34}}
-          </p>
-        </Panel>
-        <Panel name="3">
-          <p>上午空闲教室</p>
-          <p>{{computed (roomData.am12, roomData.am34).length}}</p>
-          <p slot="content">
-            {{computed (roomData.am12, roomData.am34)}}<br>
-            测试<br>
-            测试<br>
-            测试<br>
-            测试<br>
-            测试<br>
-            测试<br>
-            测试<br>
-            测试<br>
-            测试<br>
-            测试<br>
-            测试<br>
-            测试<br>
-            测试<br>
-          </p>
-        </Panel>
-        <Panel name="4">
-          <p>下午1、2节</p>
-          <p>{{roomData.pm12.length}}</p>
-          <p slot="content">
-            {{roomData.pm12}}
-          </p>
-        </Panel>
-        <Panel name="5">
-          <p>下午3、4节</p>
-          <p>{{roomData.pm34.length}}</p>
-          <p slot="content">
-            {{roomData.pm34}}
-          </p>
-        </Panel>
-        <Panel name="6">
-          <p>下午空闲教室</p>
-          <p>{{computed (roomData.pm12, roomData.pm34).length}}</p>
-          <p slot="content">
-            {{computed (roomData.pm12, roomData.pm34)}}
-          </p>
-        </Panel>
-      </Collapse>
+        </el-collapse-item>
+
+        <el-collapse-item name="2">
+          <template slot="title">
+            上午3、4节(当前：{{roomData.am34.length}})
+          </template>
+          <ul>
+            <li v-for="(item, index) in roomData.am34" :key="index">
+              {{item}}
+            </li>
+          </ul>
+        </el-collapse-item>
+        <el-collapse-item name="3">
+          <template slot="title">
+            上午空闲教室(当前：{{computed(roomData.am12, roomData.am34).length}})
+          </template>
+          <ul>
+            <li v-for="(item, index) in computed(roomData.am12, roomData.am34)" :key="index">
+              {{item}}
+            </li>
+          </ul>
+        </el-collapse-item>
+        <el-collapse-item name="4">
+          <template slot="title">
+            下午1、2节(当前：{{roomData.pm12.length}})
+          </template>
+          <ul>
+            <li v-for="(item, index) in roomData.pm12" :key="index">
+              {{item}}
+            </li>
+          </ul>
+        </el-collapse-item>
+        <el-collapse-item name="5">
+          <template slot="title">
+            下午3、4节(当前：{{roomData.pm34.length}})
+          </template>
+        </el-collapse-item>
+        <el-collapse-item name="6">
+          <template slot="title">
+            下午空闲教室(当前：{{computed (roomData.pm12, roomData.pm34).length}})
+          </template>
+          <ul>
+            <li v-for="(item, index) in computed (roomData.pm12, roomData.pm34)" :key="index">
+              {{item}}
+            </li>
+          </ul>
+        </el-collapse-item>
+      </el-collapse>
       <div id="footbar"></div>
     </div>
     <buildingSelect id="building"></buildingSelect>
@@ -85,15 +85,14 @@
 import buildingSelect from './BuildingSelect.vue'
 import daySelect from './DaySelect.vue'
 
-import Collapse from './Collapse.vue'
-import Panel from './Panel.vue'
-
 // const axios = require('axios')
 
 export default {
   data: function () {
     return {
       // activeKey: '1',
+      activeNames: ['1'],
+      // activeName: 'second',
       allRoomAllDayData: {},
       roomAllDayData: {},
       roomData: {'am12': [], 'am34': [], 'pm12': [], 'pm34': []},
@@ -103,9 +102,7 @@ export default {
   },
   components: {
     daySelect,
-    buildingSelect,
-    Collapse,
-    Panel
+    buildingSelect
   },
   methods: {
     // getData: function () {

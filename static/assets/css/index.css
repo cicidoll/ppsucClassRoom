@@ -1,6 +1,7 @@
 body {
-  width: 100vw;
+  width: 100%;
   background-color: white;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -11,7 +12,6 @@ body {
 
 #banner {
   height: 10vh;
-  width: 100vw;
   background-color: pink;
   display: flex;
   flex-direction: column;

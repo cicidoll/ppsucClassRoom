@@ -48,7 +48,8 @@ export default {
   width: 100vw;
   height: 5vh;
   font-size: 14px;
-  color: #657180;
+  color: #303133;
+  background-color: #d7dadfb2;
   display: flex;
   flex-direction: row;
 
@@ -58,15 +59,16 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-left: 0.1rem;
-    margin-right: 0.1rem;
     padding: 4px 12px;
-    margin-right: 6px;
-    background-color: #fff;
-    border: 1px solid #d7dde4;
+    border: 1px solid transparent;
+    margin-top: -1px;
+    color: #909399;
   }
   .tabs-tab-active{
-    color: #3399ff;
+    color: #409EFF;
+    background-color: #fff;
+    border-right-color: #DCDFE6;
+    border-left-color: #DCDFE6;
   }
 }
 </style>
