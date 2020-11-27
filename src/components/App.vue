@@ -85,6 +85,7 @@
         </el-collapse-item>
       </el-collapse>
       <div id="footbar"></div>
+      <div id="test"></div>
     </div>
     <buildingSelect id="building"></buildingSelect>
   </div>
@@ -93,8 +94,9 @@
 
 <script>
 import buildingSelect from './BuildingSelect.vue'
+import axios from 'axios'
 
-// const axios = require('axios')
+const apiUrl = 'http://localhost:3000/v1/test' // 传递教室数据的api服务器网址
 
 export default {
   data () {
@@ -113,22 +115,27 @@ export default {
     buildingSelect
   },
   methods: {
-    // getData: function () {
-    //   // Make a request for a user with a given ID
-    //   // GET request for remote image
-    //   axios({
-    //     method: 'get',
-    //     url: 'http://127.0.0.1:8081/data',
-    //     responseType: 'json'
-    //   }).then(function (response) {
-    //     // handle success
-    //     console.log(response)
-    //     return response
-    //   }).catch(function (error) {
-    //     // handle error
-    //     console.log(error)
-    //   })
-    // }
+    getData () {
+      // Make a request for a user with a given ID
+      // GET request for remote image
+      // 在axios中使用function () {}的写法，会导致this指向问题出错。
+      // 解决方法：使用ES6箭头函数
+      axios.get(apiUrl)
+        .then((response) => {
+          // handle success
+          // console.log(response['data']['data'])
+          this.allRoomAllDayData = response['data']['data']
+        })
+        .then(() => {
+          this.selectBuilding(0, 'zhuJian')
+          let tab = {name: this.day}
+          this.selectDay(tab)
+        })
+        .catch((error) => {
+          // handle error
+          console.log(error)
+        })
+    },
     getJsonData () {
       this.$http.get('static/classRoomData.json').then(res => {
         this.allRoomAllDayData = res.body['data']// 此处的res对象包含了json的文件信息和数据，我们需要的json数据存在于body属性中
@@ -178,10 +185,12 @@ export default {
   },
 
   created () {
-    this.getJsonData()
+    this.getData()
+    // this.getJsonData()
   },
 
   mounted () {
+    // this.getData()
     // this.selectBuilding(0, 'zhuJian')
     // console.log(this.allRoomAllDayData)
   }
