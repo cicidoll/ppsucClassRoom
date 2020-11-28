@@ -81,6 +81,11 @@
           <template slot="title">
             下午3、4节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.pm34.length}}间
           </template>
+          <ul>
+            <li v-for="(item, index) in roomData.pm34" :key="index">
+              {{item}}
+            </li>
+          </ul>
         </el-collapse-item>
         <el-collapse-item name="6">
           <template slot="title">
@@ -224,13 +229,24 @@ export default {
   }
 
   #body-content {
-    height: 86%;
+    // height: 86%;
+    min-height: 90%;
     width: 100vw;
     overflow: scroll;
+
+    #dayRadio {
+      .el-radio-group {
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    .el-collapse-item ul li{
+      list-style-type: none;
+    }
   }
 
   #buildingRadio {
-    height: 8%;
     width: 100vw;
     display: flex;
     justify-content: center;
