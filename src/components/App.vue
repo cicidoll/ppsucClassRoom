@@ -117,7 +117,7 @@
 <script>
 import axios from 'axios'
 
-const apiUrl = 'http://localhost:3000/v1/test' // 传递教室数据的api服务器网址
+const apiUrl = 'http://api.ppsuc.production.cicidoll.top:3000/v1/classRoomData' // 传递教室数据的api服务器网址
 
 export default {
   data () {
