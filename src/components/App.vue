@@ -10,6 +10,7 @@
         <el-carousel trigger="click" height="130px">
           <el-carousel-item v-for="item in 4" :key="item">
             <h2 class="small" style="text-align: center;">
+              <a href="https://github.com/cicidoll/ppsucClassRoom" target="_blank">Github链接地址</a><br>
               &nbsp;开发中···&nbsp;<br>
               &nbsp;17网二陈川&nbsp;
             </h2>
