@@ -6,25 +6,34 @@
     </div>
 
     <div id="body-content">
-    <div class="block">
-      <el-carousel trigger="click" height="130px">
-        <el-carousel-item v-for="item in 4" :key="item">
-          <h2 class="small" style="text-align: center;">
-            &nbsp;开发中···&nbsp;<br>
-            &nbsp;17网二陈川&nbsp;
-          </h2>
-        </el-carousel-item>
-      </el-carousel>
-    </div>
+      <div class="block">
+        <el-carousel trigger="click" height="130px">
+          <el-carousel-item v-for="item in 4" :key="item">
+            <h2 class="small" style="text-align: center;">
+              &nbsp;开发中···&nbsp;<br>
+              &nbsp;17网二陈川&nbsp;
+            </h2>
+          </el-carousel-item>
+        </el-carousel>
+      </div>
 
-      <el-tabs v-model="activeName" :stretch="true" @tab-click="selectDay" style="padding-left: 20px;padding-right: 20px;">
-        <!-- pane似乎无法添加@click事件，因此借用@tab-click事件，将pane的name传递过去。 -->
+      <!-- <el-tabs v-model="activeName" :stretch="true" @tab-click="selectDay" style="padding-left: 20px;padding-right: 20px;">
+        pane似乎无法添加@click事件，因此借用@tab-click事件，将pane的name传递过去。
         <el-tab-pane label="周一" name="1" ></el-tab-pane>
         <el-tab-pane label="周二" name="2" ></el-tab-pane>
         <el-tab-pane label="周三" name="3" ></el-tab-pane>
         <el-tab-pane label="周四" name="4" ></el-tab-pane>
         <el-tab-pane label="周五" name="5" ></el-tab-pane>
-      </el-tabs>
+      </el-tabs> -->
+      <div id="dayRadio">
+        <el-radio-group v-model="daySelectFlag" @change="selectDay">
+          <el-radio-button label="1">周一</el-radio-button>
+          <el-radio-button label="2">周二</el-radio-button>
+          <el-radio-button label="3">周三</el-radio-button>
+          <el-radio-button label="4">周四</el-radio-button>
+          <el-radio-button label="5">周五</el-radio-button>
+        </el-radio-group>
+      </div>
 
       <el-collapse >
         <el-collapse-item name="1">
@@ -87,13 +96,20 @@
       <div id="footbar"></div>
       <div id="test"></div>
     </div>
-    <buildingSelect id="building"></buildingSelect>
+
+    <div id="buildingRadio">
+      <el-radio-group v-model="buildingSelectFlag" @change="selectBuilding">
+        <el-radio-button label="0">铸剑楼</el-radio-button>
+        <el-radio-button label="1">中楼</el-radio-button>
+        <el-radio-button label="2">西配</el-radio-button>
+      </el-radio-group>
+    </div>
+
   </div>
 
 </template>
 
 <script>
-import buildingSelect from './BuildingSelect.vue'
 import axios from 'axios'
 
 const apiUrl = 'http://localhost:3000/v1/test' // 传递教室数据的api服务器网址
@@ -103,16 +119,15 @@ export default {
     return {
       // activeKey: '1',
       // activeNames: ['1'], // 内容选择器的标签指向器
-      activeName: '1', // 日期选择器的标签指向器
+      // activeName: '1', // 日期选择器的标签指向器
+      daySelectFlag: '1', // 日期选择器的标签指向器
+      buildingSelectFlag: '0', // 教学楼选择器的标签指向器
       allRoomAllDayData: {},
       roomAllDayData: {},
       roomData: {'am12': [], 'am34': [], 'pm12': [], 'pm34': []},
       value: '1',
-      day: 1
+      day: 1 // selectDay的默认起始
     }
-  },
-  components: {
-    buildingSelect
   },
   methods: {
     getData () {
@@ -123,35 +138,35 @@ export default {
       axios.get(apiUrl)
         .then((response) => {
           // handle success
-          // console.log(response['data']['data'])
           this.allRoomAllDayData = response['data']['data']
         })
         .then(() => {
           this.selectBuilding(0, 'zhuJian')
-          let tab = {name: this.day}
-          this.selectDay(tab)
+          this.selectDay(this.day)
         })
         .catch((error) => {
           // handle error
           console.log(error)
         })
     },
-    getJsonData () {
-      this.$http.get('static/classRoomData.json').then(res => {
-        this.allRoomAllDayData = res.body['data']// 此处的res对象包含了json的文件信息和数据，我们需要的json数据存在于body属性中
-        this.selectBuilding(0, 'zhuJian')
-      }).then(() => {
-        let tab = {name: this.day}
-        this.selectDay(tab)
-      })
-    },
-    selectBuilding (index, building) {
+    selectBuilding (name) {
+      let index = Number(name)
+      let building
+      switch (index) {
+        case 0:
+          building = 'zhuJian'
+          break
+        case 1:
+          building = 'zhongLou'
+          break
+        case 2:
+          building = 'XiPei'
+          break
+      }
       this.roomAllDayData = this.allRoomAllDayData[index][building]
-      let tab = {name: this.day}
-      this.selectDay(tab)
+      this.selectDay(this.day)
     },
-    selectDay (tab) {
-      let day = tab.name
+    selectDay (day) {
       day = Number(day)
       this.day = day
       let start = day - 1
@@ -183,38 +198,42 @@ export default {
       return res
     }
   },
-
   created () {
     this.getData()
-    // this.getJsonData()
-  },
-
-  mounted () {
-    // this.getData()
-    // this.selectBuilding(0, 'zhuJian')
-    // console.log(this.allRoomAllDayData)
   }
 }
 </script>
 
 <style lang="less" scoped>
-#body-content {
-  height: 83vh;
+#app {
+  height: 100%;
   width: 100vw;
-  overflow: scroll;
-}
+  display: flex;
+  flex-direction: column;
 
-.el-carousel__item h3 {
-  color: #475669;
-  font-size: 14px;
-  opacity: 0.75;
-  line-height: 150px;
-  margin: 0;
-}
-.el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-}
-.el-carousel__item:nth-child(2n+1) {
-    background-color: #d3dce6;
+  #banner {
+    height: 6%;
+    width: 100vw;
+    background-color:#26b2f8;
+    color: white;
+    font-size: x-large;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #body-content {
+    height: 86%;
+    width: 100vw;
+    overflow: scroll;
+  }
+
+  #buildingRadio {
+    height: 8%;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+  }
 }
 </style>

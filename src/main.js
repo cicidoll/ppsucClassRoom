@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import App from './components/App.vue'
 
-import '../static/assets/css/index.css'
+import '../static/assets/css/index.less'
 import '../static/assets/css/normalize.css'
 
 import ElementUI from 'element-ui'
