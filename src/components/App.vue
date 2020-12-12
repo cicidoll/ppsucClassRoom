@@ -9,11 +9,11 @@
       <div class="block">
         <el-carousel trigger="click" height="130px">
           <el-carousel-item v-for="item in 4" :key="item">
-            <h2 class="small" style="text-align: center;">
+            <h3 class="small" style="text-align: center;">
               <a href="https://github.com/cicidoll/ppsucClassRoom" target="_blank">Github链接地址</a><br>
-              &nbsp;开发中···&nbsp;<br>
+              &nbsp;开发中···联系方式：ayaseemt@qq.com&nbsp;<br>
               &nbsp;17网二陈川&nbsp;
-            </h2>
+            </h3>
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -41,62 +41,68 @@
           <template slot="title">
             上午1、2节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.am12.length}}间
           </template>
-          <ul>
+          {{roomData.am12}}
+          <!-- <ul>
             <li v-for="(item, index) in roomData.am12" :key="index">
               {{item}}
             </li>
-          </ul>
+          </ul> -->
         </el-collapse-item>
 
         <el-collapse-item name="2">
           <template slot="title">
             上午3、4节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.am34.length}}间
           </template>
-          <ul>
+          {{roomData.am34}}
+          <!-- <ul>
             <li v-for="(item, index) in roomData.am34" :key="index">
               {{item}}
             </li>
-          </ul>
+          </ul> -->
         </el-collapse-item>
         <el-collapse-item name="3">
           <template slot="title">
             上午空闲教室&nbsp;&nbsp;&nbsp;&nbsp;{{computed(roomData.am12, roomData.am34).length}}间
           </template>
-          <ul>
+          {{computed(roomData.am12, roomData.am34)}}
+          <!-- <ul>
             <li v-for="(item, index) in computed(roomData.am12, roomData.am34)" :key="index">
               {{item}}
             </li>
-          </ul>
+          </ul> -->
         </el-collapse-item>
         <el-collapse-item name="4">
           <template slot="title">
             下午1、2节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.pm12.length}}间
           </template>
-          <ul>
+          {{roomData.pm12}}
+          <!-- <ul>
             <li v-for="(item, index) in roomData.pm12" :key="index">
               {{item}}
             </li>
-          </ul>
+          </ul> -->
         </el-collapse-item>
         <el-collapse-item name="5">
           <template slot="title">
             下午3、4节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.pm34.length}}间
           </template>
-          <ul>
+          {{roomData.pm34}}
+          <!-- <ul>
             <li v-for="(item, index) in roomData.pm34" :key="index">
               {{item}}
             </li>
-          </ul>
+          </ul> -->
         </el-collapse-item>
         <el-collapse-item name="6">
           <template slot="title">
             下午空闲教室&nbsp;&nbsp;&nbsp;&nbsp;{{computed (roomData.pm12, roomData.pm34).length}}间
           </template>
-          <ul>
+          {{computed (roomData.pm12, roomData.pm34)}}
+          <!-- <ul>
             <li v-for="(item, index) in computed (roomData.pm12, roomData.pm34)" :key="index">
               {{item}}
             </li>
-          </ul>
+          </ul> -->
         </el-collapse-item>
       </el-collapse>
       <div id="footbar"></div>
@@ -118,7 +124,7 @@
 <script>
 import axios from 'axios'
 
-const apiUrl = 'http://api.ppsuc.production.cicidoll.top:3000/v1/classRoomData' // 传递教室数据的api服务器网址
+const apiUrl = 'http://api.ppsuc.production.cicidoll.top:3001/v1/classRoomData' // 传递教室数据的api服务器网址
 
 export default {
   data () {
