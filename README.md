@@ -3,7 +3,7 @@
 前文
 ----
 工程施工中，不定时开发······<br>
-本项目暂定开发框架为：Node.js（后端）+ Vue.js（前端框架,使用Vue-Cli脚手架） + Python（数据抓取） + MySQL（数据库）<br>
+本项目暂定开发框架为：Node.js（后端）+ Vue.js（前端框架,使用Vue-Cli脚手架,生产环境使用Element组件） + Python（数据抓取） + MySQL（数据库）<br>
 初步开发目标为网站，后续根据工作量，可能增加App或微信小程序<br>
 
 # 目录<br>
