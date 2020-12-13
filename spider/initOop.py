@@ -118,7 +118,6 @@ class netSpider:
       elif roomNumSelect is self.classRoomNumXi:
           roomSelect = "XiPei"
 
-
       for classRoomIndex,url in enumerate(urlPool):
           with requests.get(url,headers={'User-agent':self.ua}) as response:
               # 要设置响应包的编码格式为gbk，不然会乱码！！！
@@ -145,9 +144,11 @@ class netSpider:
                       #结果检测完毕
                       #append(0)为占位符,表示有课
                       if count<=5:
-                          if pathFlag==0:#pathFlag为0，代表无课
+                          if pathFlag==0:
+                              # pathFlag为0，代表无课
                               am12.append(int(roomNumSelect[classRoomIndex]))
-                          else:#pathFlag不为0，代表有课。向结果数组添加0，以示占位。
+                          else:
+                              # pathFlag不为0，代表有课。向结果数组添加0，以示占位。
                               am12.append(0)
                       elif 5<count<=10:
                           if pathFlag==0:
@@ -164,33 +165,77 @@ class netSpider:
                               pm34.append(int(roomNumSelect[classRoomIndex]))
                           else:
                               pm34.append(0)
-                    # 将教室查询有无课结果写入jsonText变量中          
-                  self.jsonText['data'].append( {roomSelect: {'am12':am12, 'am34':am34, 'pm12':pm12, 'pm34':pm34}} )
+                  # 将教室查询有无课结果写入jsonText变量中          
+                  self.jsonText['data'].append( \
+                                                {roomSelect: {'am12':am12, \
+                                                              'am34':am34, \
+                                                              'pm12':pm12, \
+                                                              'pm34':pm34 } } )
               else:
-                # 调停课信息处理，当小于当前教学周时，不将其记录。
-                pathTiaoTing = ".//div[@class='row-fluid sortable'][2]/div[@class='box span12']/div[@class='box-content']/table/tbody/tr"
-                pathJieYong = ".//div[@class='row-fluid sortable'][3]/div[@class='box span12']/div[@class='box-content']/table/tbody/tr"
-                
-                pathContent = htmlContent.xpath(pathJieYong)
-                print(len(pathContent))
-                pathContent = html.unescape(etree.tostring(pathContent[0]).decode('gbk')).replace("\t", "").replace("\n", "")
-                # 将调停课结果写入jsonText变量中
-                # self.jsonText['data'].append( {roomSelect: {'am12':am12, 'am34':am34, 'pm12':pm12, 'pm34':pm34}} )
+                  # 调停课信息处理，当小于当前教学周时，不将其记录。
+                  def decodeHtml(content):
+                      # 将xpath解析得到的Element节点，解码为字符串并返回。
+                      return html.unescape(etree.tostring(content)\
+                                                .decode('gbk'))\
+                                                .replace("\t", "")\
+                                                .replace("\n", "")
+                  pathTiaoTingKe = ".//div[@class='row-fluid sortable'][2] \
+                                    /div[@class='box span12']/div[@class='box-content'] \
+                                    /table/tbody/tr"
+                  pathJieYong = ".//div[@class='row-fluid sortable'][3] \
+                                  /div[@class='box span12']/div[@class='box-content'] \
+                                  /table/tbody/tr"
+                  # 该数据列表的具体长度
+                  tiaoTingTimes = len(htmlContent.xpath(pathTiaoTingKe))
+                  jieYongTimes = len(htmlContent.xpath(pathJieYong))
+
+                  # 开始处理调停课信息
+                  #  处理逻辑：1、先检测原教学周与现教学周是否早于当前教学周，若早于，直接跳过该组数据。
+                  # 2、需要记录数据如下：课程名字、调课类别、原上课日期、原节次、原教室、现上课日期、现节次、现教室
+
+                  # 原教学周索引为9，现教学周索引为15
+                  print('tiaoTingTimes='+str(tiaoTingTimes))
+                  for index in range(tiaoTingTimes):
+                      print('index='+str(index))
+                      pathContent = htmlContent.xpath(pathTiaoTingKe)[index]
+                      oldWeek = int(decodeHtml(pathContent[9])[4:-6])
+                      newWeek = int(decodeHtml(pathContent[15])[4:-6])
+                      if (self.week < max(oldWeek,newWeek)):
+                          print(decodeHtml(pathContent))
+                          print('*'*30)
+
+
+
+
+
+
+                  # pathContent = htmlContent.xpath(pathTiaoTingKe)[0]
+                  # pathContent = pathContent[9]
+                  # pathContent = decodeHtml(pathContent)
+                  # print(pathContent[4:-6])
+                  # print(decodeHtml(htmlContent, pathTiaoTingKe, 0))
+                  # 处理调停课数据
+                  # for i in range(tiaoTingTimes):
+                  #     # 当数据中的原教学周与现教学周，均早于当前教学周时，将其跳过。
+                  #     pass
+                  
+
+                  # 将调停课结果写入jsonText变量中
 
   def init(self, flag):
-    #flag 控制行为：true-查询课时空闲 false-查询调停课信息
-    roomList = [self.classRoomNumZhuJian]
-    # roomList = [self.classRoomNumZhuJian, self.classRoomNumZhong, self.classRoomNumXi]
-    for roomNumSelect in roomList:
-        self.getResponse(roomNumSelect, flag)    
-    # 将得到的数据保存为本地json文件
-    # jsondata = json.dumps(jsontext,indent=4,separators=(',', ': ')) # json格式美化写入（可选）
-    return 0
-    jsonName = "classRoomData.json" if flag else "tiaoTingKe.json"
-    jsondata = json.dumps(self.jsonText)
-    writeFile = open(jsonName,'w')
-    writeFile.write(jsondata)
-    writeFile.close()
+      #flag 控制行为：true-查询课时空闲 false-查询调停课信息
+      roomList = [self.classRoomNumZhuJian] #测试用
+      # roomList = [self.classRoomNumZhuJian, self.classRoomNumZhong, self.classRoomNumXi]
+      for roomNumSelect in roomList:
+          self.getResponse(roomNumSelect, flag)    
+      # 将得到的数据保存为本地json文件
+      # jsondata = json.dumps(jsontext,indent=4,separators=(',', ': ')) # json格式美化写入（可选）
+      return 0
+      jsonName = "classRoomData.json" if flag else "tiaoTingJieYong.json"
+      jsondata = json.dumps(self.jsonText)
+      writeFile = open(jsonName,'w')
+      writeFile.write(jsondata)
+      writeFile.close()
 
 # 创建对象
 newGet = netSpider()
