@@ -20,7 +20,12 @@ class netSpider:
                   }
     # 写入json的文本变量              
     self.jsonText = {'data':[]}
-    self.tiaoTingKeJsonText = {'data':[]}
+    self.tiaoTingJieYongKeJsonText = { "tiaoTing": {"zhuJian":  [],
+                                                    "zhongLou": [],
+                                                    "XiPei":    [] },
+                                        "jieYong": {"zhuJian":  [],
+                                                    "zhongLou": [],
+                                                    "XiPei":    [] } }
     # # 铸剑楼教室
     # self.classRoomNumZhuJian = ['101','102','104','105','106','108','110','111','112',
     #                             '201','202','204','205','206','207','208','210',
@@ -190,37 +195,31 @@ class netSpider:
                   jieYongTimes = len(htmlContent.xpath(pathJieYong))
 
                   # 开始处理调停课信息
-                  #  处理逻辑：1、先检测原教学周与现教学周是否早于当前教学周，若早于，直接跳过该组数据。
-                  # 2、需要记录数据如下：课程名字、调课类别、原上课日期、原节次、原教室、现上课日期、现节次、现教室
-
-                  # 原教学周索引为9，现教学周索引为15
-                  print('tiaoTingTimes='+str(tiaoTingTimes))
+                  # 1、需要记录数据如下：
+                  
                   for index in range(tiaoTingTimes):
-                      print('index='+str(index))
                       pathContent = htmlContent.xpath(pathTiaoTingKe)[index]
+                      # 原教学周索引为9，现教学周索引为15
                       oldWeek = int(decodeHtml(pathContent[9])[4:-6])
                       newWeek = int(decodeHtml(pathContent[15])[4:-6])
-                      if (self.week < max(oldWeek,newWeek)):
-                          print(decodeHtml(pathContent))
-                          print('*'*30)
-
-
-
-
-
-
-                  # pathContent = htmlContent.xpath(pathTiaoTingKe)[0]
-                  # pathContent = pathContent[9]
-                  # pathContent = decodeHtml(pathContent)
-                  # print(pathContent[4:-6])
-                  # print(decodeHtml(htmlContent, pathTiaoTingKe, 0))
-                  # 处理调停课数据
-                  # for i in range(tiaoTingTimes):
-                  #     # 当数据中的原教学周与现教学周，均早于当前教学周时，将其跳过。
-                  #     pass
-                  
-
-                  # 将调停课结果写入jsonText变量中
+                      # 检测原教学周与现教学周若早于当前教学周，直接跳过该组数据。
+                      if (self.week >= max(oldWeek,newWeek)): continue
+                      # className = 4 # 课程名字
+                      # classes = 7 # 调课类别
+                      # oldDate = 8 # 原上课日期
+                      # oldTimes = 11 # 原节次
+                      # oldRoom = 12 # 原教室
+                      # newDate = 14 # 现上课日期
+                      # newTimes = 17 # 现节次
+                      # newRoom = 18 # 现教室
+                      # self.tiaoTingKeJsonText["tiaoTing"][roomSelect] \
+                      #   .append( \
+                      #     {int(roomNumSelect[classRoomIndex]): { 'className': className, \
+                      #                                            'classes': classes, \
+                      #                                            'oldDate': oldDate, \
+                      #                                            'oldTimes': oldTimes, \
+                      #                                            'oldRoom': oldRoom, \
+                      #                                            'newDate': newDate } } )
 
   def init(self, flag):
       #flag 控制行为：true-查询课时空闲 false-查询调停课信息
@@ -231,8 +230,12 @@ class netSpider:
       # 将得到的数据保存为本地json文件
       # jsondata = json.dumps(jsontext,indent=4,separators=(',', ': ')) # json格式美化写入（可选）
       return 0
-      jsonName = "classRoomData.json" if flag else "tiaoTingJieYong.json"
-      jsondata = json.dumps(self.jsonText)
+      if flag :
+          jsonName = "classRoomData.json"
+          jsondata = json.dumps(self.jsonText)
+      else :
+          jsonName = "tiaoTingJieYong.json"
+          jsondata = json.dumps(self.tiaoTingKeJsonText)
       writeFile = open(jsonName,'w')
       writeFile.write(jsondata)
       writeFile.close()
