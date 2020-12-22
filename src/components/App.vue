@@ -18,23 +18,7 @@
         </el-carousel>
       </div>
 
-      <!-- <el-tabs v-model="activeName" :stretch="true" @tab-click="selectDay" style="padding-left: 20px;padding-right: 20px;">
-        pane似乎无法添加@click事件，因此借用@tab-click事件，将pane的name传递过去。
-        <el-tab-pane label="周一" name="1" ></el-tab-pane>
-        <el-tab-pane label="周二" name="2" ></el-tab-pane>
-        <el-tab-pane label="周三" name="3" ></el-tab-pane>
-        <el-tab-pane label="周四" name="4" ></el-tab-pane>
-        <el-tab-pane label="周五" name="5" ></el-tab-pane>
-      </el-tabs> -->
-      <div id="dayRadio">
-        <el-radio-group v-model="daySelectFlag" @change="selectDay">
-          <el-radio-button label="1">周一</el-radio-button>
-          <el-radio-button label="2">周二</el-radio-button>
-          <el-radio-button label="3">周三</el-radio-button>
-          <el-radio-button label="4">周四</el-radio-button>
-          <el-radio-button label="5">周五</el-radio-button>
-        </el-radio-group>
-      </div>
+      <dayRadio @selectDayFunc="selectDay"></dayRadio>
 
       <el-collapse >
         <el-collapse-item name="1">
@@ -122,6 +106,7 @@
 </template>
 
 <script>
+import dayRadio from './dayRadio.vue'
 import axios from 'axios'
 
 const apiUrl = 'http://api.ppsuc.production.cicidoll.top:3001/v1/classRoomData' // 传递教室数据的api服务器网址
@@ -129,10 +114,6 @@ const apiUrl = 'http://api.ppsuc.production.cicidoll.top:3001/v1/classRoomData' 
 export default {
   data () {
     return {
-      // activeKey: '1',
-      // activeNames: ['1'], // 内容选择器的标签指向器
-      // activeName: '1', // 日期选择器的标签指向器
-      daySelectFlag: '1', // 日期选择器的标签指向器
       buildingSelectFlag: '0', // 教学楼选择器的标签指向器
       allRoomAllDayData: {},
       roomAllDayData: {},
@@ -141,10 +122,11 @@ export default {
       day: 1 // selectDay的默认起始
     }
   },
+  components: {
+    dayRadio
+  },
   methods: {
     getData () {
-      // Make a request for a user with a given ID
-      // GET request for remote image
       // 在axios中使用function () {}的写法，会导致this指向问题出错。
       // 解决方法：使用ES6箭头函数
       axios.get(apiUrl)
@@ -240,13 +222,6 @@ export default {
     min-height: 90%;
     width: 100vw;
     overflow: scroll;
-
-    #dayRadio {
-      .el-radio-group {
-        display: flex;
-        justify-content: center;
-      }
-    }
 
     .el-collapse-item ul li{
       list-style-type: none;

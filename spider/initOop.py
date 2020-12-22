@@ -235,7 +235,7 @@ class netSpider:
           jsondata = json.dumps(self.jsonText)
       else :
           jsonName = "tiaoTingJieYong.json"
-          jsondata = json.dumps(self.tiaoTingKeJsonText)
+          jsondata = json.dumps(self.tiaoTingJieYongKeJsonText)
       writeFile = open(jsonName,'w')
       writeFile.write(jsondata)
       writeFile.close()
