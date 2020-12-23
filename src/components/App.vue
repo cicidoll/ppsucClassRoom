@@ -2,7 +2,9 @@
 
   <div id="app" v-cloak>
     <div id="banner">
-      <span>去哪学</span>
+      <leftDraw></leftDraw>
+      <div id="title">去哪学</div>
+      <rightSearch></rightSearch>
     </div>
 
     <div id="body-content">
@@ -25,68 +27,44 @@
           <template slot="title">
             上午1、2节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.am12.length}}间
           </template>
-          {{roomData.am12}}
-          <!-- <ul>
-            <li v-for="(item, index) in roomData.am12" :key="index">
-              {{item}}
-            </li>
-          </ul> -->
+          <roomList :buildingName="buildingName"
+                    :roomData="roomData.am12"></roomList>
         </el-collapse-item>
 
         <el-collapse-item name="2">
           <template slot="title">
             上午3、4节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.am34.length}}间
           </template>
-          {{roomData.am34}}
-          <!-- <ul>
-            <li v-for="(item, index) in roomData.am34" :key="index">
-              {{item}}
-            </li>
-          </ul> -->
+          <roomList :buildingName="buildingName"
+                    :roomData="roomData.am34"></roomList>
         </el-collapse-item>
         <el-collapse-item name="3">
           <template slot="title">
             上午空闲教室&nbsp;&nbsp;&nbsp;&nbsp;{{computed(roomData.am12, roomData.am34).length}}间
           </template>
-          {{computed(roomData.am12, roomData.am34)}}
-          <!-- <ul>
-            <li v-for="(item, index) in computed(roomData.am12, roomData.am34)" :key="index">
-              {{item}}
-            </li>
-          </ul> -->
+          <roomList :buildingName="buildingName"
+                    :roomData="computed(roomData.am12, roomData.am34)"></roomList>
         </el-collapse-item>
         <el-collapse-item name="4">
           <template slot="title">
             下午1、2节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.pm12.length}}间
           </template>
-          {{roomData.pm12}}
-          <!-- <ul>
-            <li v-for="(item, index) in roomData.pm12" :key="index">
-              {{item}}
-            </li>
-          </ul> -->
+          <roomList :buildingName="buildingName"
+                    :roomData="roomData.pm12"></roomList>
         </el-collapse-item>
         <el-collapse-item name="5">
           <template slot="title">
             下午3、4节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.pm34.length}}间
           </template>
-          {{roomData.pm34}}
-          <!-- <ul>
-            <li v-for="(item, index) in roomData.pm34" :key="index">
-              {{item}}
-            </li>
-          </ul> -->
+          <roomList :buildingName="buildingName"
+                    :roomData="roomData.pm34"></roomList>
         </el-collapse-item>
         <el-collapse-item name="6">
           <template slot="title">
             下午空闲教室&nbsp;&nbsp;&nbsp;&nbsp;{{computed (roomData.pm12, roomData.pm34).length}}间
           </template>
-          {{computed (roomData.pm12, roomData.pm34)}}
-          <!-- <ul>
-            <li v-for="(item, index) in computed (roomData.pm12, roomData.pm34)" :key="index">
-              {{item}}
-            </li>
-          </ul> -->
+          <roomList :buildingName="buildingName"
+                    :roomData="computed (roomData.pm12, roomData.pm34)"></roomList>
         </el-collapse-item>
       </el-collapse>
       <div id="footbar"></div>
@@ -107,23 +85,35 @@
 
 <script>
 import dayRadio from './dayRadio.vue'
+import roomList from './roomList.vue'
 import axios from 'axios'
+import leftDraw from './leftDraw.vue'
+import rightSearch from './rightSearch.vue'
 
 const apiUrl = 'http://api.ppsuc.production.cicidoll.top:3001/v1/classRoomData' // 传递教室数据的api服务器网址
 
 export default {
   data () {
     return {
+      // 1、教学楼选择
       buildingSelectFlag: '0', // 教学楼选择器的标签指向器
+      buildingName: 'zhuJian', // 教学楼选择器的命名指向器
+      // 2、日期选择
+      day: 1, // selectDay的默认起始
+      // 3、存放教室数据
       allRoomAllDayData: {},
       roomAllDayData: {},
-      roomData: {'am12': [], 'am34': [], 'pm12': [], 'pm34': []},
-      value: '1',
-      day: 1 // selectDay的默认起始
+      roomData: {'am12': [], 'am34': [], 'pm12': [], 'pm34': []}
+      // 4、左抽屉控制
+      // drawer: false
+      // direction: 'ltr'
     }
   },
   components: {
-    dayRadio
+    dayRadio,
+    roomList,
+    leftDraw,
+    rightSearch
   },
   methods: {
     getData () {
@@ -145,19 +135,18 @@ export default {
     },
     selectBuilding (name) {
       let index = Number(name)
-      let building
       switch (index) {
         case 0:
-          building = 'zhuJian'
+          this.buildingName = 'zhuJian'
           break
         case 1:
-          building = 'zhongLou'
+          this.buildingName = 'zhongLou'
           break
         case 2:
-          building = 'XiPei'
+          this.buildingName = 'XiPei'
           break
       }
-      this.roomAllDayData = this.allRoomAllDayData[index][building]
+      this.roomAllDayData = this.allRoomAllDayData[index][this.buildingName]
       this.selectDay(this.day)
     },
     selectDay (day) {
@@ -201,20 +190,33 @@ export default {
 <style lang="less" scoped>
 #app {
   height: 100%;
-  width: 100vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  // 隐藏滚动条
+  ::-webkit-scrollbar {
+    width: 0 !important;
+  }
+  ::-webkit-scrollbar {
+    width: 0 !important;height: 0;
+  }
 
   #banner {
-    height: 6%;
-    width: 100vw;
+    height: 30%;
+    width: 100%;
     background-color:#26b2f8;
     color: white;
-    font-size: x-large;
+    padding-top: 2%;
+    padding-bottom: 2%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
+    flex-direction: row;
+    justify-content: space-between;
+    #title{
+      font-size: xx-large;
+      background-color: pink;
+      text-align: center;
+      margin: auto 0;
+    }
   }
 
   #body-content {
