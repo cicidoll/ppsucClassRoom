@@ -8,7 +8,8 @@
       :show-close="false"
       :visible.sync="drawer"
       :direction="direction"
-      :wrapperClosable="true">
+      :wrapperClosable="true"
+      :with-header="false">
       <span>我来啦!</span>
     </el-drawer>
   </div>
@@ -28,8 +29,6 @@ export default {
 
 <style lang="less" scoped>
 #drawer{
-  width: 5vw;
-  padding: 1% 1%;
   .el-icon-more{
     background-color:#48bcf7;
     color: white;

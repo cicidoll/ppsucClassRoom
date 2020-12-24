@@ -206,16 +206,15 @@ export default {
     width: 100%;
     background-color:#26b2f8;
     color: white;
-    padding-top: 2%;
-    padding-bottom: 2%;
+    padding: 1% 1%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-content: center;
     #title{
       font-size: xx-large;
-      background-color: pink;
+      align-self: end;
       text-align: center;
-      margin: auto 0;
     }
   }
 
