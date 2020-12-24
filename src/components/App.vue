@@ -2,7 +2,7 @@
 
   <div id="app" v-cloak>
     <div id="banner">
-      <leftDraw></leftDraw>
+      <leftDrawer></leftDrawer>
       <div id="title">去哪学</div>
       <rightSearch></rightSearch>
     </div>
@@ -87,7 +87,7 @@
 import dayRadio from './dayRadio.vue'
 import roomList from './roomList.vue'
 import axios from 'axios'
-import leftDraw from './leftDraw.vue'
+import leftDrawer from './leftDrawer.vue'
 import rightSearch from './rightSearch.vue'
 
 const apiUrl = 'http://api.ppsuc.production.cicidoll.top:3001/v1/classRoomData' // 传递教室数据的api服务器网址
@@ -112,7 +112,7 @@ export default {
   components: {
     dayRadio,
     roomList,
-    leftDraw,
+    leftDrawer,
     rightSearch
   },
   methods: {
