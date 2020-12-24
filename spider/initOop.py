@@ -20,12 +20,49 @@ class netSpider:
                   }
     # 写入json的文本变量              
     self.jsonText = {'data':[]}
-    self.tiaoTingJieYongKeJsonText = { "tiaoTing": {"zhuJian":  [],
-                                                    "zhongLou": [],
-                                                    "XiPei":    [] },
-                                        "jieYong": {"zhuJian":  [],
-                                                    "zhongLou": [],
-                                                    "XiPei":    [] } }
+    self.tiaoTingJieYongKeJsonText = { 
+      'tiaoTing': {  'zhuJian':  { '101': [],'102': [],'104': [],'105': [],'106': [],'108': [],'110': [],'111': [],'112': [],
+                                   '201': [],'202': [],'204': [],'205': [],'206': [],'207': [],'208': [],'210': [],
+                                   '301': [],'302': [],'303': [],'304': [],'305': [],'306': [],'307': [],'308': [],'309': [],
+                                   '401': [],'402': [],'403': [],'404': [],'405': [],'406': [],'407': [],'408': [],'409': [],'410': [],'411': [],
+                                   '501': [],'502': [],'503': [],'504': [],'505': [],'506': [],'507': [],'508': [],'509': [],'510': [],'511': [] 
+                                  },
+                     'zhongLou': { '103': [],'104': [],'107': [],'110': [],'112': [],'113': [],
+                                   '203': [],'204': [],'205': [],'206': [],'207': [],'208': [],'210': [],'211': [],
+                                   '303': [],'304': [],'305': [],'306': [],'307': [],'308': [],
+                                   '407': [],'408': [],
+                                   '503': [],'504': [],'505': [],'506': [],'507': [],'510': [],
+                                   '603': [],'607': [],
+                                   '703': [],'704': [],'705': [],'707': [],'708': []
+                                  },
+                     'XiPei':    { '102': [],'103': [],'104': [],'105': [],'106': [],'109': [],
+                                   '202': [],'203': [],'204': [],'205': [],'206': [],'209': [],
+                                   '302': [],'303': [],'304': [],'305': [],'306': [],'309': [],
+                                   '402': [],'403': [],'404': [],'405': [],'406': [],'409': [],
+                                   '502': [],'503': [],'504': [],'505': [],'506': [],'509': [] 
+                                  } 
+                  },
+      'jieYong':{    'zhuJian':  { '101': [],'102': [],'104': [],'105': [],'106': [],'108': [],'110': [],'111': [],'112': [],
+                                   '201': [],'202': [],'204': [],'205': [],'206': [],'207': [],'208': [],'210': [],
+                                   '301': [],'302': [],'303': [],'304': [],'305': [],'306': [],'307': [],'308': [],'309': [],
+                                   '401': [],'402': [],'403': [],'404': [],'405': [],'406': [],'407': [],'408': [],'409': [],'410': [],'411': [],
+                                   '501': [],'502': [],'503': [],'504': [],'505': [],'506': [],'507': [],'508': [],'509': [],'510': [],'511': [] 
+                                  },
+                     'zhongLou': { '103': [],'104': [],'107': [],'110': [],'112': [],'113': [],
+                                   '203': [],'204': [],'205': [],'206': [],'207': [],'208': [],'210': [],'211': [],
+                                   '303': [],'304': [],'305': [],'306': [],'307': [],'308': [],
+                                   '407': [],'408': [],
+                                   '503': [],'504': [],'505': [],'506': [],'507': [],'510': [],
+                                   '603': [],'607': [],
+                                   '703': [],'704': [],'705': [],'707': [],'708': []
+                                  },
+                     'XiPei':    { '102': [],'103': [],'104': [],'105': [],'106': [],'109': [],
+                                   '202': [],'203': [],'204': [],'205': [],'206': [],'209': [],
+                                   '302': [],'303': [],'304': [],'305': [],'306': [],'309': [],
+                                   '402': [],'403': [],'404': [],'405': [],'406': [],'409': [],
+                                   '502': [],'503': [],'504': [],'505': [],'506': [],'509': [] 
+                                  } }
+    }
     # # 铸剑楼教室
     # self.classRoomNumZhuJian = ['101','102','104','105','106','108','110','111','112',
     #                             '201','202','204','205','206','207','208','210',
@@ -196,7 +233,7 @@ class netSpider:
 
                   # 开始处理调停课信息
                   # 1、需要记录数据如下：
-                  
+                  return self.tiaoTingJieYongKeJsonText.update({'test': decodeHtml(htmlContent.xpath(pathTiaoTingKe)[0])})
                   for index in range(tiaoTingTimes):
                       pathContent = htmlContent.xpath(pathTiaoTingKe)[index]
                       # 原教学周索引为9，现教学周索引为15
@@ -204,22 +241,24 @@ class netSpider:
                       newWeek = int(decodeHtml(pathContent[15])[4:-6])
                       # 检测原教学周与现教学周若早于当前教学周，直接跳过该组数据。
                       if (self.week >= max(oldWeek,newWeek)): continue
-                      # className = 4 # 课程名字
-                      # classes = 7 # 调课类别
-                      # oldDate = 8 # 原上课日期
-                      # oldTimes = 11 # 原节次
-                      # oldRoom = 12 # 原教室
-                      # newDate = 14 # 现上课日期
-                      # newTimes = 17 # 现节次
-                      # newRoom = 18 # 现教室
-                      # self.tiaoTingKeJsonText["tiaoTing"][roomSelect] \
-                      #   .append( \
-                      #     {int(roomNumSelect[classRoomIndex]): { 'className': className, \
-                      #                                            'classes': classes, \
-                      #                                            'oldDate': oldDate, \
-                      #                                            'oldTimes': oldTimes, \
-                      #                                            'oldRoom': oldRoom, \
-                      #                                            'newDate': newDate } } )
+                      className = decodeHtml(pathContent[4]) # 课程名字
+                      classes = decodeHtml(pathContent[7]) # 调课类别
+                      oldDate = decodeHtml(pathContent[8]) # 原上课日期
+                      oldTimes = decodeHtml(pathContent[11]) # 原节次
+                      oldRoom = decodeHtml(pathContent[12]) # 原教室
+                      newDate = decodeHtml(pathContent[14]) # 现上课日期
+                      newTimes = decodeHtml(pathContent[17]) # 现节次
+                      newRoom = decodeHtml(pathContent[18]) # 现教室
+                      self.tiaoTingJieYongKeJsonText["tiaoTing"][roomSelect][roomNumSelect[classRoomIndex]] \
+                        .append( \
+                            { 'className': className, \
+                              'classes': classes, \
+                              'oldDate': oldDate, \
+                              'oldTimes': oldTimes, \
+                              'oldRoom': oldRoom, \
+                              'newDate': newDate, \
+                              'newTimes': newTimes, \
+                              'newRoom': newRoom } )
 
   def init(self, flag):
       #flag 控制行为：true-查询课时空闲 false-查询调停课信息
@@ -229,13 +268,14 @@ class netSpider:
           self.getResponse(roomNumSelect, flag)    
       # 将得到的数据保存为本地json文件
       # jsondata = json.dumps(jsontext,indent=4,separators=(',', ': ')) # json格式美化写入（可选）
-      return 0
+      # return 0
       if flag :
           jsonName = "classRoomData.json"
           jsondata = json.dumps(self.jsonText)
       else :
           jsonName = "tiaoTingJieYong.json"
-          jsondata = json.dumps(self.tiaoTingJieYongKeJsonText)
+          # 加入, ensure_ascii=False 选项。导出json文件不乱码
+          jsondata = json.dumps(self.tiaoTingJieYongKeJsonText, ensure_ascii=False)
       writeFile = open(jsonName,'w')
       writeFile.write(jsondata)
       writeFile.close()

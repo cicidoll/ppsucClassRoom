@@ -12,6 +12,8 @@ yarn-error.log*
 /src/components/Tabs.vue
 /spider/classRoomData.json
 /spider/init.py
+/spider/test.py
+/spider/.json
 selenium-debug.log
 
 # Editor directories and files
