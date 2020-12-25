@@ -27,8 +27,9 @@
           <template slot="title">
             上午1、2节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.am12.length}}间
           </template>
-          <roomList :buildingName="buildingName"
-                    :roomData="roomData.am12"></roomList>
+          <roomList :roomData="roomData.am12"
+                    :mobilizeData="buildingMobilizeRoom[buildingName]"
+                    :borrowData="buildingBorrowRoom[buildingName]"></roomList>
         </el-collapse-item>
 
         <el-collapse-item name="2">
@@ -36,35 +37,45 @@
             上午3、4节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.am34.length}}间
           </template>
           <roomList :buildingName="buildingName"
-                    :roomData="roomData.am34"></roomList>
+                    :roomData="roomData.am34"
+                    :mobilizeData="buildingMobilizeRoom[buildingName]"
+                    :borrowData="buildingBorrowRoom[buildingName]"></roomList>
         </el-collapse-item>
         <el-collapse-item name="3">
           <template slot="title">
             上午空闲教室&nbsp;&nbsp;&nbsp;&nbsp;{{computed(roomData.am12, roomData.am34).length}}间
           </template>
           <roomList :buildingName="buildingName"
-                    :roomData="computed(roomData.am12, roomData.am34)"></roomList>
+                    :roomData="computed(roomData.am12, roomData.am34)"
+                    :mobilizeData="buildingMobilizeRoom[buildingName]"
+                    :borrowData="buildingBorrowRoom[buildingName]"></roomList>
         </el-collapse-item>
         <el-collapse-item name="4">
           <template slot="title">
             下午1、2节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.pm12.length}}间
           </template>
           <roomList :buildingName="buildingName"
-                    :roomData="roomData.pm12"></roomList>
+                    :roomData="roomData.pm12"
+                    :mobilizeData="buildingMobilizeRoom[buildingName]"
+                    :borrowData="buildingBorrowRoom[buildingName]"></roomList>
         </el-collapse-item>
         <el-collapse-item name="5">
           <template slot="title">
             下午3、4节&nbsp;&nbsp;&nbsp;&nbsp;{{roomData.pm34.length}}间
           </template>
           <roomList :buildingName="buildingName"
-                    :roomData="roomData.pm34"></roomList>
+                    :roomData="roomData.pm34"
+                    :mobilizeData="buildingMobilizeRoom[buildingName]"
+                    :borrowData="buildingBorrowRoom[buildingName]"></roomList>
         </el-collapse-item>
         <el-collapse-item name="6">
           <template slot="title">
             下午空闲教室&nbsp;&nbsp;&nbsp;&nbsp;{{computed (roomData.pm12, roomData.pm34).length}}间
           </template>
           <roomList :buildingName="buildingName"
-                    :roomData="computed (roomData.pm12, roomData.pm34)"></roomList>
+                    :roomData="computed (roomData.pm12, roomData.pm34)"
+                    :mobilizeData="buildingMobilizeRoom[buildingName]"
+                    :borrowData="buildingBorrowRoom[buildingName]"></roomList>
         </el-collapse-item>
       </el-collapse>
       <div id="footbar"></div>
@@ -90,7 +101,8 @@ import axios from 'axios'
 import leftDrawer from './leftDrawer.vue'
 import rightSearch from './rightSearch.vue'
 
-const apiUrl = 'http://api.ppsuc.production.cicidoll.top:3001/v1/classRoomData' // 传递教室数据的api服务器网址
+const apiClassRoomUrl = 'http://api.ppsuc.production.cicidoll.top:3001/v1/classRoomData' // 传递教室数据的api服务器网址
+const mobilizeBorrowUrl = 'http://api.ppsuc.production.cicidoll.top:3001/v1/mobilizeBorrow' // 调停课数据的api接口
 
 export default {
   data () {
@@ -100,13 +112,14 @@ export default {
       buildingName: 'zhuJian', // 教学楼选择器的命名指向器
       // 2、日期选择
       day: 1, // selectDay的默认起始
-      // 3、存放教室数据
+      // 3、存放教室空闲课时数据
       allRoomAllDayData: {},
       roomAllDayData: {},
-      roomData: {'am12': [], 'am34': [], 'pm12': [], 'pm34': []}
-      // 4、左抽屉控制
-      // drawer: false
-      // direction: 'ltr'
+      roomData: {'am12': [], 'am34': [], 'pm12': [], 'pm34': []},
+      // 4、调停课数据
+      allBuildingMobilizeBorrowRoom: {},
+      buildingMobilizeRoom: {},
+      buildingBorrowRoom: {}
     }
   },
   components: {
@@ -116,10 +129,10 @@ export default {
     rightSearch
   },
   methods: {
-    getData () {
+    getClassRoomData () {
       // 在axios中使用function () {}的写法，会导致this指向问题出错。
       // 解决方法：使用ES6箭头函数
-      axios.get(apiUrl)
+      axios.get(apiClassRoomUrl)
         .then((response) => {
           // handle success
           this.allRoomAllDayData = response['data']['data']
@@ -127,6 +140,21 @@ export default {
         .then(() => {
           this.selectBuilding(0, 'zhuJian')
           this.selectDay(this.day)
+        })
+        .catch((error) => {
+          // handle error
+          console.log(error)
+        })
+    },
+    getMobilizeBorrow () {
+      // 在axios中使用function () {}的写法，会导致this指向问题出错。
+      // 解决方法：使用ES6箭头函数
+      axios.get(mobilizeBorrowUrl)
+        .then((response) => {
+          // handle success
+          this.allBuildingMobilizeBorrowRoom = response['data']
+          this.buildingMobilizeRoom = this.allBuildingMobilizeBorrowRoom['mobilize']
+          this.buildingBorrowRoom = this.allBuildingMobilizeBorrowRoom['borrow']
         })
         .catch((error) => {
           // handle error
@@ -182,7 +210,8 @@ export default {
     }
   },
   created () {
-    this.getData()
+    this.getClassRoomData()
+    this.getMobilizeBorrow()
   }
 }
 </script>
@@ -191,15 +220,16 @@ export default {
 #app {
   height: 100%;
   width: 100%;
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   display: flex;
   flex-direction: column;
   // 隐藏滚动条
-  ::-webkit-scrollbar {
-    width: 0 !important;
-  }
-  ::-webkit-scrollbar {
-    width: 0 !important;height: 0;
-  }
+  // ::-webkit-scrollbar {
+  //   width: 0 !important;
+  // }
+  // ::-webkit-scrollbar {
+  //   width: 0 !important;height: 0;
+  // }
 
   #banner {
     height: 30%;

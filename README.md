@@ -23,6 +23,9 @@
 3.开始着手进行页面UI美化。<br>
 ***
 4.后端数据接口：采用基于Node.js的Express框架搭建<br>
+①2020.12.25 已更新空闲课时&&调停课Api接口<br>
+②[空闲课时接口](http://api.ppsuc.production.cicidoll.top:3001/v1/classRoomData)
+③[调停课信息接口](http://api.ppsuc.production.cicidoll.top:3001/v1/mobilizeBorrow)
 [Github项目地址](https://github.com/cicidoll/ppsucClassRoomService)
 ***
 
