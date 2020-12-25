@@ -7,6 +7,9 @@ from datetime import datetime # 导入datetime模块
 from interval import Interval
 from lxml.html import tostring
 import html
+# ANSI文件转UTF-8
+import codecs
+import os
 
 class netSpider:
   def __init__(self):
@@ -63,31 +66,31 @@ class netSpider:
                                    '502': [],'503': [],'504': [],'505': [],'506': [],'509': [] 
                                   } }
     }
-    # 铸剑楼教室
+    # # 铸剑楼教室
     self.classRoomNumZhuJian = ['101','102','104','105','106','108','110','111','112',
                                 '201','202','204','205','206','207','208','210',
                                 '301','302','303','304','305','306','307','308','309',
                                 '401','402','403','404','405','406','407','408','409','410','411',
                                 '501','502','503','504','505','506','507','508','509','510','511' ]
-    # 中楼教室
-    self.classRoomNumZhong = ['103','104','107','110','112','113',
-                              '203','204','205','206','207','208','210','211',
-                              '303','304','305','306','307','308',
-                              '407','408',
-                              '503','504','505','506','507','510',
-                              '603','607',
-                              '703','704','705','707','708']
-    # 西配楼教室                          
-    self.classRoomNumXi = [ '102','103','104','105','106','109',
-                            '202','203','204','205','206','209',
-                            '302','303','304','305','306','309',
-                            '402','403','404','405','406','409',
-                            '502','503','504','505','506','509',]
+    # # 中楼教室
+    # self.classRoomNumZhong = ['103','104','107','110','112','113',
+    #                           '203','204','205','206','207','208','210','211',
+    #                           '303','304','305','306','307','308',
+    #                           '407','408',
+    #                           '503','504','505','506','507','510',
+    #                           '603','607',
+    #                           '703','704','705','707','708']
+    # # 西配楼教室                          
+    # self.classRoomNumXi = [ '102','103','104','105','106','109',
+    #                         '202','203','204','205','206','209',
+    #                         '302','303','304','305','306','309',
+    #                         '402','403','404','405','406','409',
+    #                         '502','503','504','505','506','509',]
 
     #测试用教室号
-    # self.classRoomNumZhuJian = ['104']#铸剑楼教室
-    # self.classRoomNumZhong = ['103']#中楼教室
-    # self.classRoomNumXi = ['102']#西配楼教室
+    # self.classRoomNumZhuJian = ['404', '410']#铸剑楼教室
+    self.classRoomNumZhong = ['103']#中楼教室
+    self.classRoomNumXi = ['102']#西配楼教室
     # 具体课表在网页中的路径表示
     self.pathPool = [#上午1、2节
                     "//table[@class='table table-bordered table-striped table-condensed']//tr[1]//td[2]/text()",
@@ -149,7 +152,7 @@ class netSpider:
 
 
   #开始爬取
-  def getResponse(self, roomNumSelect, flag):
+  def getResponse(self, roomNumSelect):
       am12, am34, pm12, pm34 = [], [], [], []
       urlPool = self.creatUrlPool(roomNumSelect)
       
@@ -167,138 +170,140 @@ class netSpider:
               content = response.text #HTML内容
               htmlContent = etree.HTML(content)
 
-              if flag is True:
-                  count = 0
-                  for path in self.pathPool:
-                      pathTemp = htmlContent.xpath(path)
-                      count+=1
-                      pathFlag = 1#默认置1
+              count = 0
+              for path in self.pathPool:
+                  pathTemp = htmlContent.xpath(path)
+                  count+=1
+                  pathFlag = 1#默认置1
 
-                      #检测文本
-                      if len(pathTemp)==0:
-                        # 如果该节点中长度为0，则说明没有课。
-                          pathFlag=0
+                  #检测文本
+                  if len(pathTemp)==0:
+                    # 如果该节点中长度为0，则说明没有课。
+                      pathFlag=0
+                  else:
+                    # 长度不为0，说明有课。结合具体的教学周，查询本教室当前教学周是否有课
+                      pathTemp = max(pathTemp, key=len, default='')
+                      pathFlag = self.RegStr(pathTemp)
+
+                  #结果检测完毕
+                  #append(0)为占位符,表示有课
+                  if count<=5:
+                      if pathFlag==0:
+                          # pathFlag为0，代表无课
+                          am12.append(int(roomNumSelect[classRoomIndex]))
                       else:
-                        # 长度不为0，说明有课。结合具体的教学周，查询本教室当前教学周是否有课
-                          pathTemp = max(pathTemp, key=len, default='')
-                          pathFlag = self.RegStr(pathTemp)
+                          # pathFlag不为0，代表有课。向结果数组添加0，以示占位。
+                          am12.append(0)
+                  elif 5<count<=10:
+                      if pathFlag==0:
+                          am34.append(int(roomNumSelect[classRoomIndex]))
+                      else:
+                          am34.append(0)
+                  elif 10<count<=15:
+                      if pathFlag==0:
+                          pm12.append(int(roomNumSelect[classRoomIndex]))
+                      else:
+                          pm12.append(0)
+                  elif 15<count<=20:
+                      if pathFlag==0:
+                          pm34.append(int(roomNumSelect[classRoomIndex]))
+                      else:
+                          pm34.append(0)
+              # 将教室查询有无课结果写入classRoomDataJsonText变量中          
+              self.classRoomDataJsonText['data'].append( \
+                                            {roomSelect: {'am12':am12, \
+                                                          'am34':am34, \
+                                                          'pm12':pm12, \
+                                                          'pm34':pm34 } } )
+              # 调停课信息处理，当小于当前教学周时，不将其记录。
+              # def decodeHtml(content):
+              #     # 将xpath解析得到的Element节点，解码为字符串并返回。
+              #     # return etree.tostring(content) \
+              #     # return content.encode('unicode_escape')  \
+              #     # return content.encode('gbk')  \
+              #     #               .decode('utf-8')
+              #     return content
+                                            
+              pathMobilize = ".//div[@class='row-fluid sortable'][2] \
+                                /div[@class='box span12']/div[@class='box-content'] \
+                                /table/tbody/tr"
+              pathBorrow = ".//div[@class='row-fluid sortable'][3] \
+                              /div[@class='box span12']/div[@class='box-content'] \
+                              /table/tbody/tr"
+              # 该数据列表的具体长度
+              mobilizeTimes = len(htmlContent.xpath(pathMobilize))
+              borrowTimes = len(htmlContent.xpath(pathBorrow))
 
-                      #结果检测完毕
-                      #append(0)为占位符,表示有课
-                      if count<=5:
-                          if pathFlag==0:
-                              # pathFlag为0，代表无课
-                              am12.append(int(roomNumSelect[classRoomIndex]))
-                          else:
-                              # pathFlag不为0，代表有课。向结果数组添加0，以示占位。
-                              am12.append(0)
-                      elif 5<count<=10:
-                          if pathFlag==0:
-                              am34.append(int(roomNumSelect[classRoomIndex]))
-                          else:
-                              am34.append(0)
-                      elif 10<count<=15:
-                          if pathFlag==0:
-                              pm12.append(int(roomNumSelect[classRoomIndex]))
-                          else:
-                              pm12.append(0)
-                      elif 15<count<=20:
-                          if pathFlag==0:
-                              pm34.append(int(roomNumSelect[classRoomIndex]))
-                          else:
-                              pm34.append(0)
-                  # 将教室查询有无课结果写入classRoomDataJsonText变量中          
-                  self.classRoomDataJsonText['data'].append( \
-                                                {roomSelect: {'am12':am12, \
-                                                              'am34':am34, \
-                                                              'pm12':pm12, \
-                                                              'pm34':pm34 } } )
-              else:
-                  # 调停课信息处理，当小于当前教学周时，不将其记录。
-                  def decodeHtml(content):
-                      # 将xpath解析得到的Element节点，解码为字符串并返回。
-                      return html.unescape(etree.tostring(content)\
-                                                .decode('gbk'))\
-                                                .replace("\t", "")\
-                                                .replace("\n", "")
-                  pathMobilize = ".//div[@class='row-fluid sortable'][2] \
-                                    /div[@class='box span12']/div[@class='box-content'] \
-                                    /table/tbody/tr"
-                  pathBorrow = ".//div[@class='row-fluid sortable'][3] \
-                                  /div[@class='box span12']/div[@class='box-content'] \
-                                  /table/tbody/tr"
-                  # 该数据列表的具体长度
-                  mobilizeTimes = len(htmlContent.xpath(pathMobilize))
-                  borrowTimes = len(htmlContent.xpath(pathBorrow))
+              # 开始处理调停课信息
+              # 1、需要记录数据如下：
+              for index in range(mobilizeTimes):
+                  pathContent = htmlContent.xpath(pathMobilize)[index]
+                  className = pathContent[4][0].xpath('string(.)') # 课程名字
+                  classes = pathContent[7].xpath('string(.)') # 调课类别
+                  oldDate = pathContent[8].xpath('string(.)') # 原上课日期
+                  oldTimes = pathContent[11].xpath('string(.)') # 原节次
+                  oldRoom = pathContent[12][0].xpath('string(.)') # 原教室
+                  newDate = '' # 置空
+                  newTimes = '' # 置空
+                  newRoom = '' # 置空
 
-                  # 开始处理调停课信息
-                  # 1、需要记录数据如下：
-                  for index in range(mobilizeTimes):
-                      pathContent = htmlContent.xpath(pathMobilize)[index]
-                      className = pathContent[4][0].xpath('string(.)') # 课程名字
-                      classes = pathContent[7].xpath('string(.)') # 调课类别
-                      oldDate = pathContent[8].xpath('string(.)') # 原上课日期
-                      oldTimes = pathContent[11].xpath('string(.)') # 原节次
-                      oldRoom = pathContent[12][0].xpath('string(.)') # 原教室
-                      newDate = '' # 置空
-                      newTimes = '' # 置空
-                      newRoom = '' # 置空
+                  if classes != '停课':
+                      # 原教学周索引为9，现教学周索引为15
+                      oldWeek = int(pathContent[9].xpath('string(.)'))
+                      newWeek = int(pathContent[15].xpath('string(.)'))
+                      # 检测原教学周与现教学周若早于当前教学周，直接跳过该组数据。
+                      if (self.week >= max(oldWeek,newWeek)): continue
+                      newDate = pathContent[14].xpath('string(.)') # 现上课日期
+                      newTimes = pathContent[17].xpath('string(.)') # 现节次
+                      newRoom = pathContent[18][0].xpath('string(.)') # 现教室
+                  self.mobilizeBorrowJsonText["mobilize"][roomSelect][roomNumSelect[classRoomIndex]] \
+                    .append( \
+                        { 'className': className, \
+                          'classes': classes, \
+                          'oldDate': oldDate, \
+                          'oldTimes': oldTimes, \
+                          'oldRoom': oldRoom, \
+                          'newDate': newDate, \
+                          'newTimes': newTimes, \
+                          'newRoom': newRoom } )
 
-                      if classes != '停课':
-                          # 原教学周索引为9，现教学周索引为15
-                          oldWeek = int(pathContent[9].xpath('string(.)'))
-                          newWeek = int(pathContent[15].xpath('string(.)'))
-                          # 检测原教学周与现教学周若早于当前教学周，直接跳过该组数据。
-                          if (self.week >= max(oldWeek,newWeek)): continue
-                          newDate = pathContent[14].xpath('string(.)') # 现上课日期
-                          newTimes = pathContent[17].xpath('string(.)') # 现节次
-                          newRoom = pathContent[18][0].xpath('string(.)') # 现教室
-                      self.mobilizeBorrowJsonText["mobilize"][roomSelect][roomNumSelect[classRoomIndex]] \
-                        .append( \
-                            { 'className': className, \
-                              'classes': classes, \
-                              'oldDate': oldDate, \
-                              'oldTimes': oldTimes, \
-                              'oldRoom': oldRoom, \
-                              'newDate': newDate, \
-                              'newTimes': newTimes, \
-                              'newRoom': newRoom } )
-
-                  for index in range(borrowTimes):
-                      pathContent = htmlContent.xpath(pathBorrow)[index]
-                      if pathContent[11].xpath('string(.)') == '否': continue # 若借用申请未通过审核，则跳过。
-                      borrowDate = pathContent[4].xpath('string(.)') # 借用日期
-                      borrowTime = pathContent[5].xpath('string(.)') # 借用时间
-                      borrowReason = pathContent[6].xpath('string(.)') # 借用事由                      
-                      if ( (datetime.strptime(re.findall(r"(.+?)（",borrowDate)[0],'%Y-%m-%d') - datetime.today()).days < 0 ): 
-                        continue # 当借用日期已过期，则将其跳过。
-                      self.mobilizeBorrowJsonText["borrow"][roomSelect][roomNumSelect[classRoomIndex]] \
-                        .append( \
-                            { 'borrowDate': borrowDate, \
-                              'borrowTime': borrowTime, \
-                              'borrowReason': borrowReason } )
+              for index in range(borrowTimes):
+                  pathContent = htmlContent.xpath(pathBorrow)[index]
+                  if pathContent[11].xpath('string(.)') == '否': continue # 若借用申请未通过审核，则跳过。
+                  borrowDate = pathContent[4].xpath('string(.)') # 借用日期
+                  borrowTime = pathContent[5].xpath('string(.)') # 借用时间
+                  borrowReason = pathContent[6].xpath('string(.)') # 借用事由                      
+                  if ( (datetime.strptime(re.findall(r"(.+?)（",borrowDate)[0],'%Y-%m-%d') - datetime.today() ).days < 0 ): 
+                    continue # 当借用日期已过期，则将其跳过。
+                  self.mobilizeBorrowJsonText["borrow"][roomSelect][roomNumSelect[classRoomIndex]] \
+                    .append( \
+                        { 'borrowDate': borrowDate, \
+                          'borrowTime': borrowTime, \
+                          'borrowReason': borrowReason } )
 
 
-  def init(self, flag):
-      #flag 控制行为：true-查询课时空闲 false-查询调停课信息
-      # roomList = [self.classRoomNumZhuJian] #测试用
-      roomList = [self.classRoomNumZhuJian, self.classRoomNumZhong, self.classRoomNumXi]
+  def init(self):
+      roomList = [self.classRoomNumZhuJian] #测试用
+      # roomList = [self.classRoomNumZhuJian, self.classRoomNumZhong, self.classRoomNumXi]
       for roomNumSelect in roomList:
-          self.getResponse(roomNumSelect, flag)    
+          self.getResponse(roomNumSelect)    
       # 将得到的数据保存为本地json文件
       # jsondata = json.dumps(jsontext,indent=4,separators=(',', ': ')) # json格式美化写入（可选）
-      if flag :
-          jsonName = "classRoomData.json"
-          jsondata = json.dumps(self.classRoomDataJsonText)
-      else :
-          jsonName = "mobilizeBorrow.json"
-          # 加入, ensure_ascii=False 选项。导出json文件不乱码
-          jsondata = json.dumps(self.mobilizeBorrowJsonText, ensure_ascii=False)
-      writeFile = open(jsonName,'w')
+
+      jsonName = "classRoomData.json"
+      jsondata = json.dumps(self.classRoomDataJsonText)
+      writeFile = open(jsonName,'w', encoding='utf-8')
+      writeFile.write(jsondata)
+      writeFile.close()
+
+      jsonName = "mobilizeBorrow.json"
+      # 加入 ensure_ascii=False 选项。导出json文件不乱码
+      jsondata = json.dumps(self.mobilizeBorrowJsonText, ensure_ascii=False)
+      writeFile = open(jsonName,'w', encoding='utf-8')
       writeFile.write(jsondata)
       writeFile.close()
 
 # 创建对象
 newGet = netSpider()
 # 初始化，开始请求查询
-newGet.init(False) # 传入True，查询空闲课时；传入False，查询调停借用。
+newGet.init() # 传入True，查询空闲课时；传入False，查询调停借用。
