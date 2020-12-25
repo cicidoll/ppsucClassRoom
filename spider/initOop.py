@@ -3,8 +3,8 @@ from urllib import parse
 import requests
 import json
 import re
+from datetime import datetime # 导入datetime模块
 from interval import Interval
-
 from lxml.html import tostring
 import html
 
@@ -19,9 +19,9 @@ class netSpider:
                     #  "%CD%C5%D6%FD%BD%A3%C2%A5"是由"团铸剑楼"gbk编码得来
                   }
     # 写入json的文本变量              
-    self.jsonText = {'data':[]}
-    self.tiaoTingJieYongKeJsonText = { 
-      'tiaoTing': {  'zhuJian':  { '101': [],'102': [],'104': [],'105': [],'106': [],'108': [],'110': [],'111': [],'112': [],
+    self.classRoomDataJsonText = {'data':[]}
+    self.mobilizeBorrowJsonText = { 
+      'mobilize': {  'zhuJian':  { '101': [],'102': [],'104': [],'105': [],'106': [],'108': [],'110': [],'111': [],'112': [],
                                    '201': [],'202': [],'204': [],'205': [],'206': [],'207': [],'208': [],'210': [],
                                    '301': [],'302': [],'303': [],'304': [],'305': [],'306': [],'307': [],'308': [],'309': [],
                                    '401': [],'402': [],'403': [],'404': [],'405': [],'406': [],'407': [],'408': [],'409': [],'410': [],'411': [],
@@ -42,7 +42,7 @@ class netSpider:
                                    '502': [],'503': [],'504': [],'505': [],'506': [],'509': [] 
                                   } 
                   },
-      'jieYong':{    'zhuJian':  { '101': [],'102': [],'104': [],'105': [],'106': [],'108': [],'110': [],'111': [],'112': [],
+      'borrow':{    'zhuJian':  { '101': [],'102': [],'104': [],'105': [],'106': [],'108': [],'110': [],'111': [],'112': [],
                                    '201': [],'202': [],'204': [],'205': [],'206': [],'207': [],'208': [],'210': [],
                                    '301': [],'302': [],'303': [],'304': [],'305': [],'306': [],'307': [],'308': [],'309': [],
                                    '401': [],'402': [],'403': [],'404': [],'405': [],'406': [],'407': [],'408': [],'409': [],'410': [],'411': [],
@@ -207,8 +207,8 @@ class netSpider:
                               pm34.append(int(roomNumSelect[classRoomIndex]))
                           else:
                               pm34.append(0)
-                  # 将教室查询有无课结果写入jsonText变量中          
-                  self.jsonText['data'].append( \
+                  # 将教室查询有无课结果写入classRoomDataJsonText变量中          
+                  self.classRoomDataJsonText['data'].append( \
                                                 {roomSelect: {'am12':am12, \
                                                               'am34':am34, \
                                                               'pm12':pm12, \
@@ -221,20 +221,20 @@ class netSpider:
                                                 .decode('gbk'))\
                                                 .replace("\t", "")\
                                                 .replace("\n", "")
-                  pathTiaoTingKe = ".//div[@class='row-fluid sortable'][2] \
+                  pathMobilize = ".//div[@class='row-fluid sortable'][2] \
                                     /div[@class='box span12']/div[@class='box-content'] \
                                     /table/tbody/tr"
-                  pathJieYong = ".//div[@class='row-fluid sortable'][3] \
+                  pathBorrow = ".//div[@class='row-fluid sortable'][3] \
                                   /div[@class='box span12']/div[@class='box-content'] \
                                   /table/tbody/tr"
                   # 该数据列表的具体长度
-                  tiaoTingTimes = len(htmlContent.xpath(pathTiaoTingKe))
-                  jieYongTimes = len(htmlContent.xpath(pathJieYong))
+                  mobilizeTimes = len(htmlContent.xpath(pathMobilize))
+                  borrowTimes = len(htmlContent.xpath(pathBorrow))
 
                   # 开始处理调停课信息
                   # 1、需要记录数据如下：
-                  for index in range(tiaoTingTimes):
-                      pathContent = htmlContent.xpath(pathTiaoTingKe)[index]
+                  for index in range(mobilizeTimes):
+                      pathContent = htmlContent.xpath(pathMobilize)[index]
                       # 原教学周索引为9，现教学周索引为15
                       oldWeek = int(decodeHtml(pathContent[9])[4:-6])
                       newWeek = int(decodeHtml(pathContent[15])[4:-6])
@@ -248,7 +248,7 @@ class netSpider:
                       newDate = pathContent[14].xpath('string(.)') # 现上课日期
                       newTimes = pathContent[17].xpath('string(.)') # 现节次
                       newRoom = pathContent[18][0].xpath('string(.)') # 现教室
-                      self.tiaoTingJieYongKeJsonText["tiaoTing"][roomSelect][roomNumSelect[classRoomIndex]] \
+                      self.mobilizeBorrowJsonText["mobilize"][roomSelect][roomNumSelect[classRoomIndex]] \
                         .append( \
                             { 'className': className, \
                               'classes': classes, \
@@ -258,6 +258,21 @@ class netSpider:
                               'newDate': newDate, \
                               'newTimes': newTimes, \
                               'newRoom': newRoom } )
+
+                  for index in range(borrowTimes):
+                      pathContent = htmlContent.xpath(pathBorrow)[index]
+                      if pathContent[11].xpath('string(.)') == '否': continue # 若借用申请未通过审核，则跳过。
+                      borrowDate = pathContent[4].xpath('string(.)') # 借用日期
+                      borrowTime = pathContent[5].xpath('string(.)') # 借用时间
+                      borrowReason = pathContent[6].xpath('string(.)') # 借用事由                      
+                      if ( (datetime.strptime(re.findall(r"(.+?)（",borrowDate)[0],'%Y-%m-%d') - datetime.today()).days < 0 ): 
+                        continue # 当借用日期已过期，则将其跳过。
+                      self.mobilizeBorrowJsonText["borrow"][roomSelect][roomNumSelect[classRoomIndex]] \
+                        .append( \
+                            { 'borrowDate': borrowDate, \
+                              'borrowTime': borrowTime, \
+                              'borrowReason': borrowReason } )
+
 
   def init(self, flag):
       #flag 控制行为：true-查询课时空闲 false-查询调停课信息
@@ -269,11 +284,11 @@ class netSpider:
       # jsondata = json.dumps(jsontext,indent=4,separators=(',', ': ')) # json格式美化写入（可选）
       if flag :
           jsonName = "classRoomData.json"
-          jsondata = json.dumps(self.jsonText)
+          jsondata = json.dumps(self.classRoomDataJsonText)
       else :
-          jsonName = "tiaoTingJieYong.json"
+          jsonName = "mobilizeBorrow.json"
           # 加入, ensure_ascii=False 选项。导出json文件不乱码
-          jsondata = json.dumps(self.tiaoTingJieYongKeJsonText, ensure_ascii=False)
+          jsondata = json.dumps(self.mobilizeBorrowJsonText, ensure_ascii=False)
       writeFile = open(jsonName,'w')
       writeFile.write(jsondata)
       writeFile.close()
@@ -281,4 +296,4 @@ class netSpider:
 # 创建对象
 newGet = netSpider()
 # 初始化，开始请求查询
-newGet.init(False)
+newGet.init(False) # 传入True，查询空闲课时；传入False，查询调停借用。
