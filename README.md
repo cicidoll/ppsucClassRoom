@@ -18,6 +18,7 @@
 ***
 2.Python数据爬取脚本初步完成。<br>
     (1)完成教学周课程是否为本周课程的正则匹配判定。<br>
+    (2)2020.12.25更新：已完成对调停课信息查询。<br>
 ***
 3.开始着手进行页面UI美化，同时添加Python数据处理功能：可处理当前调停课信息。<br>
 ***
@@ -33,7 +34,7 @@
     production分支为预设生产环境代码分支
 
 # 实例页面<br>
-[页面链接](http://secret.ppsuc.cicidoll.top/)
+[页面链接](http://ppsuc.demo.cicidoll.top/)
 
 ## Build Setup
 
