@@ -13,7 +13,7 @@ yarn-error.log*
 /spider/classRoomData.json
 /spider/init.py
 /spider/test.py
-/spider/tiaoTingJieYong.json
+/spider/mobilizeBorrow.json
 /spider/classRoomData.json
 selenium-debug.log
 
