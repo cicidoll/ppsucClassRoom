@@ -233,7 +233,6 @@ class netSpider:
 
                   # 开始处理调停课信息
                   # 1、需要记录数据如下：
-                  return self.tiaoTingJieYongKeJsonText.update({'test': decodeHtml(htmlContent.xpath(pathTiaoTingKe)[0])})
                   for index in range(tiaoTingTimes):
                       pathContent = htmlContent.xpath(pathTiaoTingKe)[index]
                       # 原教学周索引为9，现教学周索引为15
@@ -241,14 +240,14 @@ class netSpider:
                       newWeek = int(decodeHtml(pathContent[15])[4:-6])
                       # 检测原教学周与现教学周若早于当前教学周，直接跳过该组数据。
                       if (self.week >= max(oldWeek,newWeek)): continue
-                      className = decodeHtml(pathContent[4]) # 课程名字
-                      classes = decodeHtml(pathContent[7]) # 调课类别
-                      oldDate = decodeHtml(pathContent[8]) # 原上课日期
-                      oldTimes = decodeHtml(pathContent[11]) # 原节次
-                      oldRoom = decodeHtml(pathContent[12]) # 原教室
-                      newDate = decodeHtml(pathContent[14]) # 现上课日期
-                      newTimes = decodeHtml(pathContent[17]) # 现节次
-                      newRoom = decodeHtml(pathContent[18]) # 现教室
+                      className = pathContent[4][0].xpath('string(.)') # 课程名字
+                      classes = pathContent[7].xpath('string(.)') # 调课类别
+                      oldDate = pathContent[8].xpath('string(.)') # 原上课日期
+                      oldTimes = pathContent[11].xpath('string(.)') # 原节次
+                      oldRoom = pathContent[12][0].xpath('string(.)') # 原教室
+                      newDate = pathContent[14].xpath('string(.)') # 现上课日期
+                      newTimes = pathContent[17].xpath('string(.)') # 现节次
+                      newRoom = pathContent[18][0].xpath('string(.)') # 现教室
                       self.tiaoTingJieYongKeJsonText["tiaoTing"][roomSelect][roomNumSelect[classRoomIndex]] \
                         .append( \
                             { 'className': className, \
@@ -268,7 +267,6 @@ class netSpider:
           self.getResponse(roomNumSelect, flag)    
       # 将得到的数据保存为本地json文件
       # jsondata = json.dumps(jsontext,indent=4,separators=(',', ': ')) # json格式美化写入（可选）
-      # return 0
       if flag :
           jsonName = "classRoomData.json"
           jsondata = json.dumps(self.jsonText)
