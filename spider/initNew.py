@@ -12,17 +12,17 @@ import codecs
 import os
 
 class netSpider:
-  def __init__(self):
+  def __init__(self, week):
     self.baseUrl = 'http://121.194.213.115/swyt/jxcdkbcx.php' #基于校园内网地址进行爬取
     self.ua = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36'
-    self.week = 16# http://121.194.213.72/ 教务处网站 获取实时教学周
+    self.week = week# http://121.194.213.72/ 教务处网站 获取实时教学周
     self.urlDic = {
                     'xnxq':"'2020-20211'"#查询日期,默认为2020-2021第一学期
                     #'jxcdmc'为教室get请求头
                     #  "%CD%C5%D6%FD%BD%A3%C2%A5"是由"团铸剑楼"gbk编码得来
                   }
     # 写入json的文本变量              
-    self.classRoomDataJsonText = {'data':[]}
+    self.classRoomDataJsonText = {'zhuJian': {'am12':[],'am34':[],'pm12':[],'pm34':[]}, 'zhongLou':{'am12':[],'am34':[],'pm12':[],'pm34':[]}, 'XiPei':{'am12':[],'am34':[],'pm12':[],'pm34':[]}}
     self.mobilizeBorrowJsonText = { 
       'mobilize': {  'zhuJian':  { '101': [],'102': [],'104': [],'105': [],'106': [],'108': [],'110': [],'111': [],'112': [],
                                    '201': [],'202': [],'204': [],'205': [],'206': [],'207': [],'208': [],'210': [],
@@ -124,15 +124,15 @@ class netSpider:
       if roomNumSelect is self.classRoomNumZhuJian:
           for roomNum in roomNumSelect:
               # 铸剑楼拼接字符串
-              urlPool.append("{}?{}&jxcdmc=%27%CD%C5%D6%FD%BD%A3%C2%A5{}%27".format(self.baseUrl,parse.urlencode(self.urlDic),roomNum))
+              urlPool.append("{}?{}&jxcdmc=%27%CD%C5%D6%FD%BD%A3%C2%A5{}%27".format(self.baseUrl, parse.urlencode(self.urlDic), roomNum))
       elif roomNumSelect is self.classRoomNumZhong:
           for roomNum in roomNumSelect:
               # 中楼拼接字符串
-              urlPool.append("{}?{}&jxcdmc=%27%CD%C5%D3%FD%BE%AF%D6%D0%C2%A5{}%27".format(self.baseUrl,parse.urlencode(self.urlDic),roomNum))
+              urlPool.append("{}?{}&jxcdmc=%27%CD%C5%D3%FD%BE%AF%D6%D0%C2%A5{}%27".format(self.baseUrl, parse.urlencode(self.urlDic), roomNum))
       elif roomNumSelect is self.classRoomNumXi:
           for roomNum in roomNumSelect:
               # 西配楼拼接字符串
-              urlPool.append("{}?{}&jxcdmc=%27%CD%C5%D3%FD%BE%AF%CE%F7%C2%A5{}%27".format(self.baseUrl,parse.urlencode(self.urlDic),roomNum))
+              urlPool.append("{}?{}&jxcdmc=%27%CD%C5%D3%FD%BE%AF%CE%F7%C2%A5{}%27".format(self.baseUrl, parse.urlencode(self.urlDic), roomNum))
       return urlPool
 
   def RegStr(self, string):
@@ -209,21 +209,8 @@ class netSpider:
                           pm34.append(int(roomNumSelect[classRoomIndex]))
                       else:
                           pm34.append(0)
-              # 将教室查询有无课结果写入classRoomDataJsonText变量中          
-              self.classRoomDataJsonText['data'].append( \
-                                            {roomSelect: {'am12':am12, \
-                                                          'am34':am34, \
-                                                          'pm12':pm12, \
-                                                          'pm34':pm34 } } )
+
               # 调停课信息处理，当小于当前教学周时，不将其记录。
-              # def decodeHtml(content):
-              #     # 将xpath解析得到的Element节点，解码为字符串并返回。
-              #     # return etree.tostring(content) \
-              #     # return content.encode('unicode_escape')  \
-              #     # return content.encode('gbk')  \
-              #     #               .decode('utf-8')
-              #     return content
-                                            
               pathMobilize = ".//div[@class='row-fluid sortable'][2] \
                                 /div[@class='box span12']/div[@class='box-content'] \
                                 /table/tbody/tr"
@@ -280,7 +267,11 @@ class netSpider:
                         { 'borrowDate': borrowDate, \
                           'borrowTime': borrowTime, \
                           'borrowReason': borrowReason } )
-
+            # 将教室查询有无课结果写入classRoomDataJsonText变量中          
+      self.classRoomDataJsonText[roomSelect]['am12'].extend(am12)
+      self.classRoomDataJsonText[roomSelect]['am34'].extend(am34)
+      self.classRoomDataJsonText[roomSelect]['pm12'].extend(pm12)
+      self.classRoomDataJsonText[roomSelect]['pm34'].extend(pm34)
 
   def init(self):
       # roomList = [self.classRoomNumZhuJian] #测试用
@@ -291,19 +282,20 @@ class netSpider:
       # jsondata = json.dumps(jsontext,indent=4,separators=(',', ': ')) # json格式美化写入（可选）
 
       jsonName = "classRoomData.json"
-      jsondata = json.dumps(self.classRoomDataJsonText)
+      jsondata = json.dumps(self.classRoomDataJsonText,separators=(',',':'))
       writeFile = open(jsonName,'w', encoding='utf-8')
       writeFile.write(jsondata)
       writeFile.close()
 
       jsonName = "mobilizeBorrow.json"
       # 加入 ensure_ascii=False 选项。导出json文件不乱码
-      jsondata = json.dumps(self.mobilizeBorrowJsonText, ensure_ascii=False)
+      jsondata = json.dumps(self.mobilizeBorrowJsonText, ensure_ascii=False,separators=(',',':'))
       writeFile = open(jsonName,'w', encoding='utf-8')
       writeFile.write(jsondata)
       writeFile.close()
 
 # 创建对象
-newGet = netSpider()
+# 传入当前教学周。
+newGet = netSpider(17)
 # 初始化，开始请求查询
-newGet.init() # 传入True，查询空闲课时；传入False，查询调停借用。
+newGet.init() 

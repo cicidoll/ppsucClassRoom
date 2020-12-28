@@ -1,18 +1,20 @@
 <template>
   <div class="roomItem">
-    <div class="itemName">
-      {{itemName}}
+    <div style="display: flex;justify-content: center;padding: -10%">
+      <div class="itemName">
+        {{itemName}}
+      </div>
     </div>
     <div class="itemBody">
       <el-collapse accordion>
-        <el-collapse-item>
+        <el-collapse-item  v-if="mobilizeData.length != 0">
           <template slot="title">
             &nbsp;&nbsp;&nbsp;调停课信息 {{mobilizeData.length}}条
           </template>
           <roomItemTableMobilize :itemData="mobilizeData"></roomItemTableMobilize>
         </el-collapse-item>
-        <el-collapse-item>
-          <template slot="title">
+        <el-collapse-item v-if="borrowData.length != 0">
+          <template slot="title" >
             &nbsp;&nbsp;&nbsp;借用教室信息 {{borrowData.length}}条
           </template>
           <roomItemTableBorrow :itemData="borrowData"></roomItemTableBorrow>
@@ -42,12 +44,13 @@ export default {
   display: flex;
   font-size: 16px;
   color: #303133;
-  border-radius: 30px;
+  border: 1px solid #00d412;
   .itemName{
     width: 10vw;
     font-size: 18px;
-    border: 1px solid blue;
-    border-radius: 30px;
+    background-color: #26b2f8;
+    color: black;
+    // border-radius: 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
