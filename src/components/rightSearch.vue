@@ -1,6 +1,6 @@
 <template>
   <div id="search">
-    <el-button  type="primary"
+    <el-button  type="primary" disabled
                 class="el-icon-search"></el-button>
   </div>
 </template>
